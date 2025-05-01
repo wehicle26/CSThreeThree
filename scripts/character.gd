@@ -5,21 +5,28 @@ extends CharacterBody2D
 
 var next_path_position: Vector2
 var facing_direction: int
-@onready var ray_cast_2d = $RayCast2D
+var last_direction = 0
 
 func _ready() -> void:
 	navigation_agent_2d.velocity_computed.connect(Callable(_on_velocity_computed))
-	set_facing_direction()
+	set_facing_direction(Vector2.ZERO)
 
 func set_movement_target(movement_target: Vector2):
 	navigation_agent_2d.set_target_position(movement_target)
 
-func set_facing_direction() -> void:
-	var angle = snappedf(velocity.angle(), PI/4) / (PI/4)
-	#ray_cast_2d.target_position = angle
-	angle = wrapi(int(angle), 0, 7)
-	print("Facing direction is: {0}".format([angle]))
-	facing_direction = angle
+func set_facing_direction(direction: Vector2) -> int:
+	if direction.length_squared() < 0.01:
+		return last_direction
+		
+	var angle = direction.normalized().angle() + (PI / 8.0) / 2.0
+	angle = wrapf(angle, 0.0, TAU)
+	
+	var slice = int(angle / (PI / 4.0))
+	
+	var iso_index = (slice + 1) % 8
+	last_direction = iso_index
+	
+	return iso_index
 	
 func _physics_process(_delta):
 	# Do not query when the map has never synchronized and is empty.
@@ -38,6 +45,4 @@ func _physics_process(_delta):
 func _on_velocity_computed(safe_velocity: Vector2):
 	velocity = safe_velocity
 	move_and_slide()
-
-func _on_navigation_agent_2d_waypoint_reached(details):
-	set_facing_direction()
+	facing_direction = set_facing_direction(safe_velocity)

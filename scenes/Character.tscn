@@ -439,6 +439,7 @@ texture = SubResource("PortableCompressedTexture2D_0kroj")
 offset = Vector2(0, -200)
 hframes = 13
 vframes = 13
+frame = 21
 metadata/_aseprite_wizard_interface_config_ = {
 "animation_section": false,
 "layer_section": false,
@@ -474,7 +475,3 @@ metadata/_custom_type_script = "uid://dsnjlxvj4s1uu"
 [node name="Run" type="Node" parent="StateMachine"]
 script = ExtResource("4_rguqb")
 metadata/_custom_type_script = "uid://dsnjlxvj4s1uu"
-
-[node name="RayCast2D" type="RayCast2D" parent="."]
-
-[connection signal="waypoint_reached" from="NavigationAgent2D" to="." method="_on_navigation_agent_2d_waypoint_reached"]
