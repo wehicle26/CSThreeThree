@@ -1,9 +1,35 @@
-[gd_scene load_steps=2 format=4 uid="uid://6opg1v27ttbt"]
+[gd_scene load_steps=5 format=3 uid="uid://6opg1v27ttbt"]
 
 [ext_resource type="TileSet" uid="uid://bvsvefc2b128j" path="res://assets/environment/prototype_tileset.tres" id="1_nthim"]
+[ext_resource type="Script" uid="uid://nuslap3qp6us" path="res://scenes/prototype_2.gd" id="1_wnbk0"]
+[ext_resource type="Script" uid="uid://dedftrkeydnae" path="res://addons/TopDownCamera2D/top_down_camera_2d.gd" id="3_xleg1"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_xleg1"]
+font_size = 24
+font_color = Color(0, 0, 0, 1)
 
 [node name="Node2D" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_wnbk0")
 
 [node name="Floor" type="TileMapLayer" parent="."]
-tile_map_data = PackedByteArray("AAAAAAEAAQAEAAUAAAABAAEAAQAGAAUAAAABAAAAAQAGAAUAAAAAAAAAAQAHAAUAAAACAAAAAQAGAAUAAAACAAEAAQAGAAUAAAACAAIAAQAGAAUAAAABAAIAAQAGAAUAAAAAAAIAAQAFAAUAAAD//wEAAQAHAAUAAAD//wAAAQAEAAUAAAD//wIAAQAFAAUAAAD+/wEAAQAGAAUAAAD+/wAAAQAHAAUAAAD+////AQAFAAUAAAD/////AQAEAAUAAAAAAP//AQAEAAUAAAABAP//AQAHAAUAAAACAP//AQAEAAUAAAD+/wIAAQAFAAUAAAA=")
+y_sort_enabled = true
 tile_set = ExtResource("1_nthim")
+
+[node name="Items" type="TileMapLayer" parent="."]
+z_index = 1
+y_sort_enabled = true
+tile_set = ExtResource("1_nthim")
+
+[node name="TopDownCamera2D" type="Camera2D" parent="."]
+script = ExtResource("3_xleg1")
+metadata/_custom_type_script = "uid://dedftrkeydnae"
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="MouseTooltipLabel" type="Label" parent="CanvasLayer"]
+top_level = true
+offset_right = 49.0
+offset_bottom = 34.0
+text = "Test"
+label_settings = SubResource("LabelSettings_xleg1")
