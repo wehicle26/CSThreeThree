@@ -45,9 +45,33 @@ func _ready():
 func _input(event):
 	if event is InputEventMouseMotion:
 		update_mouse_tooltip(top_down_camera_2d.get_global_mouse_position())
+	
+	if event is InputEventMouseButton and event.is_action_pressed("select"):
+		place_wall(world_to_grid(top_down_camera_2d.get_global_mouse_position()))
 
 func _process(_delta):
 	pass
+
+func place_wall(wall_grid_coords: Vector2i):
+	var offset_pos = wall_grid_coords - grid_offset
+	if not is_within_grid(offset_pos):
+		push_error("Cannot place a wall outside the play area.")
+		return
+	
+	var tile_data = get_grid_info(wall_grid_coords)
+
+	if tile_data["obstructed"]:
+		push_error("Cannot place a wall on a blocked tile.")
+		return
+	
+	if tile_data["treasure"]:
+		push_error("Cannot place wall on treasure.")
+		return
+
+	tile_data["obstructed"] = true
+	set_grid_info(wall_grid_coords, tile_data)
+	walls_tile_map_layer.set_cell(wall_grid_coords, source_id, WALL_ORANGE_ATLAS_COORDS.pick_random())
+	calculate_distances_from_target()
 
 func spawn_unit(spawn_position: Vector2):
 	var grid_pos = world_to_grid(spawn_position)
@@ -166,6 +190,11 @@ func get_arrow_tile(direction: Vector2i) -> Vector2i:
 	if direction == Vector2i.LEFT:	return TILE_ARROW_LEFT
 	if direction == Vector2i.RIGHT:	return TILE_ARROW_RIGHT
 	return Vector2i(-1, -1)
+
+func set_grid_info(grid_pos: Vector2i, tile_data: Dictionary) -> void:
+	var offset_pos = grid_pos - grid_offset
+	if is_within_grid(offset_pos):
+		grid_data[offset_pos.x][offset_pos.y] = tile_data
 
 func get_grid_info(grid_pos: Vector2i) -> Dictionary:
 	var offset_pos = grid_pos - grid_offset
