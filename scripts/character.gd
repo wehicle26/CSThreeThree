@@ -1,5 +1,6 @@
 extends CharacterBody2D
 
+class_name Explorer
 @export var movement_speed = 300.0
 @onready var navigation_agent_2d = $NavigationAgent2D
 

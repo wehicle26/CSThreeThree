@@ -1,5 +1,7 @@
 extends Node2D
 
+class_name Level
+
 @onready var floor_tile_map_layer: TileMapLayer = $Floor
 @onready var highlight_path: TileMapLayer = $HighlightPath
 @onready var walls_tile_map_layer: TileMapLayer = $Walls
@@ -12,6 +14,10 @@ var character_scene = preload("Character.tscn")
 const FLOOR_WHITE_ATLAS_COORDS: Array = [Vector2i(28, 2), Vector2i(29, 2), Vector2i(30, 2), Vector2i(31, 2)]
 const FLOOR_ORANGE_ATLAS_COORDS: Array = [Vector2i(4, 2), Vector2i(5, 2), Vector2i(6, 2), Vector2i(7, 2)]
 const WALL_ORANGE_ATLAS_COORDS: Array = [Vector2i(48, 3), Vector2i(49, 3), Vector2i(50, 3), Vector2i(51, 3)]
+const HALF_WALL_ORANGE_ATLAS_COORDS: Array = [Vector2i(44, 3), Vector2i(45, 3), Vector2i(46, 3), Vector2i(47, 3)]
+const JAGGY_WALL_ORANGE_ATLAS_COORDS: Array = [Vector2i(31, 1), Vector2i(32, 1), Vector2i(33, 1), Vector2i(35, 1),\
+Vector2i(36, 1), Vector2i(37, 1), Vector2i(38, 1), Vector2i(39, 1)]
+const RAMP_ORANGE_ATLAS_COORDS: Array = [Vector2i(48, 1), Vector2i(49, 1), Vector2i(50, 1), Vector2i(51, 1)]
 const TREASURE_BOX_ATLAS_COORDS: Array = [Vector2i(20, 3), Vector2i(21, 3), Vector2i(22, 3), Vector2i(23, 3)]
 # const TILE_ARROW_DOWN = Vector2i(52, 3)
 # const TILE_ARROW_RIGHT = Vector2i(53, 3)
@@ -25,6 +31,7 @@ const INF = 1e9
 const DIRECTIONS = [Vector2i.DOWN, Vector2i.UP, Vector2i.RIGHT, Vector2i.LEFT]
 const PATH_ARROW_INTERVAL = 3
 
+var explorer: Explorer
 var initial_treasure_box_placement_tile = Vector2i(0, 0)
 var distance_to_treasure_grid = []
 var last_tile_path = []
@@ -35,6 +42,8 @@ var grid_width = 10
 var grid_height = 10
 var grid_offset = Vector2i.ZERO
 var debug_text = ""
+var player_input_enabled: bool = false
+var num_blocks = 1
 
 func _ready():
 	initiliaze_grid()
@@ -43,13 +52,20 @@ func _ready():
 	mouse_tooltip_label.hide()
 
 func _input(event):
-	if event is InputEventMouseMotion:
+	if event is InputEventMouseMotion and false:
 		update_mouse_tooltip(top_down_camera_2d.get_global_mouse_position())
 	
-	if event is InputEventMouseButton and event.is_action_pressed("select"):
+	if event is InputEventMouseButton and event.is_action_pressed("select") and player_input_enabled:
 		place_wall(world_to_grid(top_down_camera_2d.get_global_mouse_position()))
 
 func _process(_delta):
+	pass
+
+func execute_explorer_turn():
+	calculate_distances_from_target()
+	update_mouse_tooltip(explorer.global_position)
+
+func execute_player_turn():
 	pass
 
 func place_wall(wall_grid_coords: Vector2i):
@@ -57,7 +73,11 @@ func place_wall(wall_grid_coords: Vector2i):
 	if not is_within_grid(offset_pos):
 		push_error("Cannot place a wall outside the play area.")
 		return
-	
+
+	if num_blocks <= 0:
+		push_error("Cannot place a wall with 0 blocks remaining!")
+		return
+
 	var tile_data = get_grid_info(wall_grid_coords)
 
 	if tile_data["obstructed"]:
@@ -71,20 +91,20 @@ func place_wall(wall_grid_coords: Vector2i):
 	tile_data["obstructed"] = true
 	set_grid_info(wall_grid_coords, tile_data)
 	walls_tile_map_layer.set_cell(wall_grid_coords, source_id, WALL_ORANGE_ATLAS_COORDS.pick_random())
-	calculate_distances_from_target()
+	num_blocks -= 1
 
 func spawn_unit(spawn_position: Vector2):
 	var grid_pos = world_to_grid(spawn_position)
 	if is_within_grid(grid_pos - grid_offset):
-		var unit = character_scene.instantiate()
-		unit.global_position = grid_to_world(grid_pos)
-		add_child(unit)
+		explorer = character_scene.instantiate()
+		explorer.global_position = grid_to_world(grid_pos)
+		add_child(explorer)
 
 func update_mouse_tooltip(mouse_pos: Vector2):
 	var mouse_grid_pos = world_to_grid(mouse_pos)
 	var path_highlight_info: Array[Dictionary] = []
 	var distance_to_treasure = INF
-	if mouse_grid_pos == last_hovered_grid_pos:
+	if  false: #mouse_grid_pos == last_hovered_grid_pos:
 		return
 	else:
 		clear_previous_path()
@@ -252,7 +272,10 @@ func initiliaze_grid() -> void:
 				grid_data[offset_pos.x][offset_pos.y]["obstructed"] = true
 
 			current_atlas_coords = walls_tile_map_layer.get_cell_atlas_coords(current_tile_pos)
-			if is_tile_in_list(current_atlas_coords, WALL_ORANGE_ATLAS_COORDS):
+			if is_tile_in_list(current_atlas_coords, WALL_ORANGE_ATLAS_COORDS) \
+			or is_tile_in_list(current_atlas_coords, HALF_WALL_ORANGE_ATLAS_COORDS) \
+			or is_tile_in_list(current_atlas_coords, JAGGY_WALL_ORANGE_ATLAS_COORDS) \
+			or is_tile_in_list(current_atlas_coords, RAMP_ORANGE_ATLAS_COORDS):
 				grid_data[offset_pos.x][offset_pos.y]["obstructed"] = true
 
 			current_atlas_coords = items_tile_map_layer.get_cell_atlas_coords(current_tile_pos)

@@ -1,0 +1,31 @@
+extends StateNode
+
+var level: Level
+var init = false
+
+
+func _enter_state(_old_state: StringName, _params: Dictionary) -> void:
+    if not init:
+        level = get_common_node().get_node("Level")
+        var top_level = level.get_parent()
+        top_level.end_player_turn.connect(_end_turn)
+        level.num_blocks = 1
+        init = true
+    elif level.num_blocks < 2:
+        level.num_blocks += 1
+
+    level.player_input_enabled = true
+    level.execute_player_turn()
+    %NextTurnButton.text = "End Turn"
+
+func _exit_state(_new_state: StringName, _params: Dictionary) -> void:
+    level.player_input_enabled = false
+
+func _end_turn():
+    enter_state("ExplorerTurn")
+
+func _physics_process(_delta: float) -> void:
+    pass
+
+func _unhandled_input(_event: InputEvent) -> void:
+    pass
