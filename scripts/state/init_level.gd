@@ -5,12 +5,12 @@ var init = false
     
 
 func _enter_state(_old_state: StringName, _params: Dictionary) -> void:
+    var top_level = get_common_node()
     if not init:
-        var top_level = get_common_node()
         level = top_level.get_node("Level")
         top_level.start_round.connect(_start_round)
         init = true
-
+    
     %NextTurnButton.text = "Start Round"
 
 func _exit_state(_new_state: StringName, _params: Dictionary) -> void:

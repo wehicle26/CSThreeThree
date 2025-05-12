@@ -38,6 +38,7 @@ var last_tile_path = []
 var last_hovered_grid_pos = Vector2i(-1, -1)
 var source_id = 1
 var grid_data: Array = []
+var walls_placed: Array = []
 var grid_width = 10
 var grid_height = 10
 var grid_offset = Vector2i.ZERO
@@ -91,7 +92,29 @@ func place_wall(wall_grid_coords: Vector2i):
 	tile_data["obstructed"] = true
 	set_grid_info(wall_grid_coords, tile_data)
 	walls_tile_map_layer.set_cell(wall_grid_coords, source_id, WALL_ORANGE_ATLAS_COORDS.pick_random())
+	walls_placed.append({
+		"wall_grid_coords": wall_grid_coords, 
+		"tile_data": tile_data})
 	num_blocks -= 1
+	%BlockadeLabel.text = "Blockades: %d/3" % [num_blocks]
+
+func load_level_data(data: Dictionary):
+	explorer.global_position = data["explorer_pos"]
+	num_blocks = data["num_blocks"]
+	top_down_camera_2d.target_position = data["camera_pos"]
+	top_down_camera_2d.target_zoom = data["camera_zoom"]
+	for blockade in data["walls_placed"]:
+		set_grid_info(blockade["wall_grid_coords"], blockade["tile_data"])
+		walls_tile_map_layer.set_cell(blockade["wall_grid_coords"], source_id, WALL_ORANGE_ATLAS_COORDS.pick_random())
+
+func get_level_data() -> Dictionary:
+	return {
+		"explorer_pos": explorer.global_position,
+        "num_blocks": num_blocks,
+		"camera_pos": top_down_camera_2d.target_position,
+		"camera_zoom": top_down_camera_2d.target_zoom,
+		"walls_placed": walls_placed
+	}
 
 func spawn_unit(spawn_position: Vector2):
 	var grid_pos = world_to_grid(spawn_position)

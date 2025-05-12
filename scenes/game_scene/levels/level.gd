@@ -35,6 +35,8 @@ func _ready() -> void:
 	level_state = GameState.get_level_state(scene_file_path)
 	#%ColorPickerButton.color = level_state.color
 	%BackgroundColor.color = level_state.color
+	if not level_state.data.is_empty():
+		get_node("Level").load_level_data(level_state.data)
 	if not level_state.tutorial_read:
 		open_tutorials()
 
