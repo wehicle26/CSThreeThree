@@ -29,7 +29,7 @@ const TILE_ARROW_DOWN = Vector2i(58, 3)
 const TILE_ARROW_LEFT = Vector2i(59, 3)
 const INF = 1e9
 const DIRECTIONS = [Vector2i.DOWN, Vector2i.UP, Vector2i.RIGHT, Vector2i.LEFT]
-const PATH_ARROW_INTERVAL = 5
+const PATH_ARROW_INTERVAL = 10
 
 var explorer: Explorer
 var initial_treasure_box_placement_tile = Vector2i(0, 0)

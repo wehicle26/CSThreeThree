@@ -48,5 +48,8 @@ offset_bottom = 34.0
 text = "Test"
 label_settings = SubResource("LabelSettings_xleg1")
 
+[node name="CanvasModulate" type="CanvasModulate" parent="CanvasLayer"]
+color = Color(0, 0, 0, 1)
+
 [node name="InitialSpawnPosition" type="Marker2D" parent="."]
 position = Vector2(-2067, -1294)

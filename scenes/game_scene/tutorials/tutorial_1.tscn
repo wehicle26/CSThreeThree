@@ -20,9 +20,8 @@ text = "Tutorial"
 visible = true
 
 [node name="DescriptionLabel" parent="MenuPanelContainer/MarginContainer/BoxContainer/DescriptionMargin" index="0"]
-text = "[center]The explorers are trying to get your treasure.
-Place obstacles to hinder their progress.
-Stop them at all costs![/center]"
+text = "[center]You are the Temple entity.
+Your divine purpose is to thwart the explorer.[/center]"
 fit_content = true
 
 [node name="CloseButton" parent="MenuPanelContainer/MarginContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="0"]
