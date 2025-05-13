@@ -23,3 +23,6 @@ visible = true
 text = "[center]Progress is saved.
 Pressing Continue from the main menu will load the last level played.[/center]"
 fit_content = true
+
+[node name="CloseButton" parent="MenuPanelContainer/MarginContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="0"]
+text = "Continue"

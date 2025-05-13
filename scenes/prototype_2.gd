@@ -1,5 +1,7 @@
 extends Node2D
 
+class_name Level
+
 @onready var floor_tile_map_layer: TileMapLayer = $Floor
 @onready var highlight_path: TileMapLayer = $HighlightPath
 @onready var walls_tile_map_layer: TileMapLayer = $Walls
@@ -12,6 +14,10 @@ var character_scene = preload("Character.tscn")
 const FLOOR_WHITE_ATLAS_COORDS: Array = [Vector2i(28, 2), Vector2i(29, 2), Vector2i(30, 2), Vector2i(31, 2)]
 const FLOOR_ORANGE_ATLAS_COORDS: Array = [Vector2i(4, 2), Vector2i(5, 2), Vector2i(6, 2), Vector2i(7, 2)]
 const WALL_ORANGE_ATLAS_COORDS: Array = [Vector2i(48, 3), Vector2i(49, 3), Vector2i(50, 3), Vector2i(51, 3)]
+const HALF_WALL_ORANGE_ATLAS_COORDS: Array = [Vector2i(44, 3), Vector2i(45, 3), Vector2i(46, 3), Vector2i(47, 3)]
+const JAGGY_WALL_ORANGE_ATLAS_COORDS: Array = [Vector2i(31, 1), Vector2i(32, 1), Vector2i(33, 1), Vector2i(35, 1),\
+Vector2i(36, 1), Vector2i(37, 1), Vector2i(38, 1), Vector2i(39, 1)]
+const RAMP_ORANGE_ATLAS_COORDS: Array = [Vector2i(48, 1), Vector2i(49, 1), Vector2i(50, 1), Vector2i(51, 1)]
 const TREASURE_BOX_ATLAS_COORDS: Array = [Vector2i(20, 3), Vector2i(21, 3), Vector2i(22, 3), Vector2i(23, 3)]
 # const TILE_ARROW_DOWN = Vector2i(52, 3)
 # const TILE_ARROW_RIGHT = Vector2i(53, 3)
@@ -23,33 +29,55 @@ const TILE_ARROW_DOWN = Vector2i(58, 3)
 const TILE_ARROW_LEFT = Vector2i(59, 3)
 const INF = 1e9
 const DIRECTIONS = [Vector2i.DOWN, Vector2i.UP, Vector2i.RIGHT, Vector2i.LEFT]
-const PATH_ARROW_INTERVAL = 3
+const PATH_ARROW_INTERVAL = 5
 
+var explorer: Explorer
 var initial_treasure_box_placement_tile = Vector2i(0, 0)
 var distance_to_treasure_grid = []
-var last_tile_path = []
+var last_tile_path: Array = []
 var last_hovered_grid_pos = Vector2i(-1, -1)
 var source_id = 1
 var grid_data: Array = []
+var walls_placed: Array = []
 var grid_width = 10
 var grid_height = 10
 var grid_offset = Vector2i.ZERO
 var debug_text = ""
+var player_input_enabled: bool = false
+var num_blocks = 1
 
 func _ready():
 	initiliaze_grid()
 	spawn_unit(initial_spawn_position.global_position)
 	calculate_distances_from_target()
 	mouse_tooltip_label.hide()
+	top_down_camera_2d.target_position = initial_spawn_position.global_position
+	var tween := create_tween()
+	tween.tween_property(top_down_camera_2d, "target_zoom", Vector2(0.2, 0.2), 2)
+	tween.tween_property(top_down_camera_2d, "target_position", Vector2(-3500.0, -2200.0), 2)
+	#await tween.finished
 
 func _input(event):
-	if event is InputEventMouseMotion:
+	if event is InputEventMouseMotion and false:
 		update_mouse_tooltip(top_down_camera_2d.get_global_mouse_position())
 	
-	if event is InputEventMouseButton and event.is_action_pressed("select"):
+	if event is InputEventMouseButton and event.is_action_pressed("select") and player_input_enabled:
 		place_wall(world_to_grid(top_down_camera_2d.get_global_mouse_position()))
 
 func _process(_delta):
+	pass
+
+func execute_explorer_turn():
+	calculate_distances_from_target()
+	update_mouse_tooltip(explorer.global_position)
+	move_explorer()
+
+func move_explorer():
+	last_tile_path.pop_front()
+	var coords = last_tile_path.pop_front()
+	explorer.global_position = grid_to_world(coords)
+	
+func execute_player_turn():
 	pass
 
 func place_wall(wall_grid_coords: Vector2i):
@@ -57,7 +85,11 @@ func place_wall(wall_grid_coords: Vector2i):
 	if not is_within_grid(offset_pos):
 		push_error("Cannot place a wall outside the play area.")
 		return
-	
+
+	if num_blocks <= 0:
+		push_error("Cannot place a wall with 0 blocks remaining!")
+		return
+
 	var tile_data = get_grid_info(wall_grid_coords)
 
 	if tile_data["obstructed"]:
@@ -71,20 +103,42 @@ func place_wall(wall_grid_coords: Vector2i):
 	tile_data["obstructed"] = true
 	set_grid_info(wall_grid_coords, tile_data)
 	walls_tile_map_layer.set_cell(wall_grid_coords, source_id, WALL_ORANGE_ATLAS_COORDS.pick_random())
-	calculate_distances_from_target()
+	walls_placed.append({
+		"wall_grid_coords": wall_grid_coords, 
+		"tile_data": tile_data})
+	num_blocks -= 1
+	%BlockadeLabel.text = "Blockades: %d/3" % [num_blocks]
+
+func load_level_data(data: Dictionary):
+	explorer.global_position = data["explorer_pos"]
+	num_blocks = data["num_blocks"]
+	top_down_camera_2d.target_position = data["camera_pos"]
+	top_down_camera_2d.target_zoom = data["camera_zoom"]
+	for blockade in data["walls_placed"]:
+		set_grid_info(blockade["wall_grid_coords"], blockade["tile_data"])
+		walls_tile_map_layer.set_cell(blockade["wall_grid_coords"], source_id, WALL_ORANGE_ATLAS_COORDS.pick_random())
+
+func get_level_data() -> Dictionary:
+	return {
+		"explorer_pos": explorer.global_position,
+        "num_blocks": num_blocks,
+		"camera_pos": top_down_camera_2d.target_position,
+		"camera_zoom": top_down_camera_2d.target_zoom,
+		"walls_placed": walls_placed
+	}
 
 func spawn_unit(spawn_position: Vector2):
 	var grid_pos = world_to_grid(spawn_position)
 	if is_within_grid(grid_pos - grid_offset):
-		var unit = character_scene.instantiate()
-		unit.global_position = grid_to_world(grid_pos)
-		add_child(unit)
+		explorer = character_scene.instantiate()
+		explorer.global_position = grid_to_world(grid_pos)
+		add_sibling.call_deferred(explorer)
 
 func update_mouse_tooltip(mouse_pos: Vector2):
 	var mouse_grid_pos = world_to_grid(mouse_pos)
 	var path_highlight_info: Array[Dictionary] = []
 	var distance_to_treasure = INF
-	if mouse_grid_pos == last_hovered_grid_pos:
+	if  false: #mouse_grid_pos == last_hovered_grid_pos:
 		return
 	else:
 		clear_previous_path()
@@ -252,7 +306,10 @@ func initiliaze_grid() -> void:
 				grid_data[offset_pos.x][offset_pos.y]["obstructed"] = true
 
 			current_atlas_coords = walls_tile_map_layer.get_cell_atlas_coords(current_tile_pos)
-			if is_tile_in_list(current_atlas_coords, WALL_ORANGE_ATLAS_COORDS):
+			if is_tile_in_list(current_atlas_coords, WALL_ORANGE_ATLAS_COORDS) \
+			or is_tile_in_list(current_atlas_coords, HALF_WALL_ORANGE_ATLAS_COORDS) \
+			or is_tile_in_list(current_atlas_coords, JAGGY_WALL_ORANGE_ATLAS_COORDS) \
+			or is_tile_in_list(current_atlas_coords, RAMP_ORANGE_ATLAS_COORDS):
 				grid_data[offset_pos.x][offset_pos.y]["obstructed"] = true
 
 			current_atlas_coords = items_tile_map_layer.get_cell_atlas_coords(current_tile_pos)
