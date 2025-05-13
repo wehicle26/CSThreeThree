@@ -29,12 +29,12 @@ const TILE_ARROW_DOWN = Vector2i(58, 3)
 const TILE_ARROW_LEFT = Vector2i(59, 3)
 const INF = 1e9
 const DIRECTIONS = [Vector2i.DOWN, Vector2i.UP, Vector2i.RIGHT, Vector2i.LEFT]
-const PATH_ARROW_INTERVAL = 3
+const PATH_ARROW_INTERVAL = 5
 
 var explorer: Explorer
 var initial_treasure_box_placement_tile = Vector2i(0, 0)
 var distance_to_treasure_grid = []
-var last_tile_path = []
+var last_tile_path: Array = []
 var last_hovered_grid_pos = Vector2i(-1, -1)
 var source_id = 1
 var grid_data: Array = []
@@ -51,6 +51,11 @@ func _ready():
 	spawn_unit(initial_spawn_position.global_position)
 	calculate_distances_from_target()
 	mouse_tooltip_label.hide()
+	top_down_camera_2d.target_position = initial_spawn_position.global_position
+	var tween := create_tween()
+	tween.tween_property(top_down_camera_2d, "target_zoom", Vector2(0.2, 0.2), 2)
+	tween.tween_property(top_down_camera_2d, "target_position", Vector2(-3500.0, -2200.0), 2)
+	#await tween.finished
 
 func _input(event):
 	if event is InputEventMouseMotion and false:
@@ -65,7 +70,13 @@ func _process(_delta):
 func execute_explorer_turn():
 	calculate_distances_from_target()
 	update_mouse_tooltip(explorer.global_position)
+	move_explorer()
 
+func move_explorer():
+	last_tile_path.pop_front()
+	var coords = last_tile_path.pop_front()
+	explorer.global_position = grid_to_world(coords)
+	
 func execute_player_turn():
 	pass
 
@@ -121,7 +132,7 @@ func spawn_unit(spawn_position: Vector2):
 	if is_within_grid(grid_pos - grid_offset):
 		explorer = character_scene.instantiate()
 		explorer.global_position = grid_to_world(grid_pos)
-		add_child(explorer)
+		add_sibling.call_deferred(explorer)
 
 func update_mouse_tooltip(mouse_pos: Vector2):
 	var mouse_grid_pos = world_to_grid(mouse_pos)

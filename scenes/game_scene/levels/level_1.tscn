@@ -99,6 +99,7 @@ layout_mode = 2
 text = "End Turn"
 
 [node name="Level" type="Node2D" parent="."]
+y_sort_enabled = true
 script = ExtResource("6_8avtb")
 
 [node name="Floor" type="TileMapLayer" parent="Level"]

@@ -21,7 +21,7 @@ func _enter_state(_old_state: StringName, _params: Dictionary) -> void:
     %NextTurnButton.text = "End Turn"
     top_level.level_state.saved = true
     top_level.level_state.data = level.get_level_data()
-    top_level.level_state.current_state = "PlayerTurn"
+    top_level.level_state.current_level_state = "PlayerTurn"
     GlobalState.save()
 
 func _exit_state(_new_state: StringName, _params: Dictionary) -> void:

@@ -37,6 +37,7 @@ func _ready() -> void:
 	%BackgroundColor.color = level_state.color
 	if not level_state.data.is_empty():
 		get_node("Level").load_level_data(level_state.data)
+		state_machine.enter_state(level_state.current_level_state)
 	if not level_state.tutorial_read:
 		open_tutorials()
 
