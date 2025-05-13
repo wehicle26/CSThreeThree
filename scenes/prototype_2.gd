@@ -29,12 +29,13 @@ const TILE_ARROW_DOWN = Vector2i(58, 3)
 const TILE_ARROW_LEFT = Vector2i(59, 3)
 const INF = 1e9
 const DIRECTIONS = [Vector2i.DOWN, Vector2i.UP, Vector2i.RIGHT, Vector2i.LEFT]
-const PATH_ARROW_INTERVAL = 10
+const PATH_ARROW_INTERVAL = 15
 
 var explorer: Explorer
 var initial_treasure_box_placement_tile = Vector2i(0, 0)
 var distance_to_treasure_grid = []
 var last_tile_path: Array = []
+var full_tile_path: Array = []
 var last_hovered_grid_pos = Vector2i(-1, -1)
 var source_id = 1
 var grid_data: Array = []
@@ -53,13 +54,13 @@ func _ready():
 	mouse_tooltip_label.hide()
 	top_down_camera_2d.target_position = initial_spawn_position.global_position
 	var tween := create_tween()
-	tween.tween_property(top_down_camera_2d, "target_zoom", Vector2(0.2, 0.2), 2)
-	tween.tween_property(top_down_camera_2d, "target_position", Vector2(-3500.0, -2200.0), 2)
+	tween.tween_property(top_down_camera_2d, "target_zoom", Vector2(0.5, 0.5), 1)
+	#tween.tween_property(top_down_camera_2d, "target_position", Vector2(-3500.0, -2200.0), 2)
 	#await tween.finished
 
 func _input(event):
-	if event is InputEventMouseMotion and false:
-		update_mouse_tooltip(top_down_camera_2d.get_global_mouse_position())
+	if event is InputEventMouseMotion and player_input_enabled:
+		update_block_tile_highlight(top_down_camera_2d.get_global_mouse_position())
 	
 	if event is InputEventMouseButton and event.is_action_pressed("select") and player_input_enabled:
 		place_wall(world_to_grid(top_down_camera_2d.get_global_mouse_position()))
@@ -73,10 +74,22 @@ func execute_explorer_turn():
 	move_explorer()
 
 func move_explorer():
-	last_tile_path.pop_front()
-	var coords = last_tile_path.pop_front()
-	explorer.global_position = grid_to_world(coords)
-	
+	full_tile_path.pop_front()
+	var coords = full_tile_path.pop_front()
+	for i in range(PATH_ARROW_INTERVAL):
+		if coords == null:
+			explorer_win()
+			break
+		#var tween := create_tween()
+		#tween.tween_property(explorer, "global_position", grid_to_world(coords), .2)
+		#await tween.finished
+		explorer.set_movement_target(grid_to_world(coords))
+		await get_tree().create_timer(.4).timeout
+		coords = full_tile_path.pop_front()
+
+func explorer_win():
+	get_parent().level_won.emit()
+
 func execute_player_turn():
 	pass
 
@@ -121,7 +134,7 @@ func load_level_data(data: Dictionary):
 func get_level_data() -> Dictionary:
 	return {
 		"explorer_pos": explorer.global_position,
-        "num_blocks": num_blocks,
+		"num_blocks": num_blocks,
 		"camera_pos": top_down_camera_2d.target_position,
 		"camera_zoom": top_down_camera_2d.target_zoom,
 		"walls_placed": walls_placed
@@ -134,6 +147,23 @@ func spawn_unit(spawn_position: Vector2):
 		explorer.global_position = grid_to_world(grid_pos)
 		add_sibling.call_deferred(explorer)
 
+func update_block_tile_highlight(mouse_pos: Vector2):
+	var mouse_grid_pos = world_to_grid(mouse_pos)
+	if  mouse_grid_pos == last_hovered_grid_pos:
+		return
+	else:
+		var offset_pos = mouse_grid_pos - grid_offset
+		if is_within_grid(offset_pos):
+			if offset_pos.x >= 0 and offset_pos.x < grid_width \
+			and offset_pos.y >= 0 and offset_pos.y < grid_height:
+				pass
+			var grid_info = get_grid_info(mouse_grid_pos)
+			if grid_info["obstructed"] == false and grid_info["treasure"] == false:
+				if last_hovered_grid_pos != Vector2i(-1, -1) and get_grid_info(last_hovered_grid_pos)["obstructed"] == false:
+					walls_tile_map_layer.erase_cell(last_hovered_grid_pos)
+				walls_tile_map_layer.set_cell(mouse_grid_pos, source_id, WALL_ORANGE_ATLAS_COORDS.pick_random())
+				last_hovered_grid_pos = mouse_grid_pos
+
 func update_mouse_tooltip(mouse_pos: Vector2):
 	var mouse_grid_pos = world_to_grid(mouse_pos)
 	var path_highlight_info: Array[Dictionary] = []
@@ -142,7 +172,7 @@ func update_mouse_tooltip(mouse_pos: Vector2):
 		return
 	else:
 		clear_previous_path()
-		last_hovered_grid_pos = mouse_grid_pos
+		#last_hovered_grid_pos = mouse_grid_pos
 
 		var offset_pos = mouse_grid_pos - grid_offset
 		if is_within_grid(offset_pos):
@@ -225,7 +255,7 @@ func show_debug_path(path_info: Array[Dictionary]):
 		if tile_to_set != Vector2i(-1, -1) and index % PATH_ARROW_INTERVAL == 0:
 			highlight_path.set_cell(coords, source_id, tile_to_set)
 			last_tile_path.append(coords)
-			
+		full_tile_path.append(coords)
 		index += 1
 		
 
@@ -237,6 +267,7 @@ func clear_previous_path():
 		highlight_path.erase_cell(coords)
 
 	last_tile_path.clear()
+	full_tile_path.clear()
 
 func get_arrow_tile(direction: Vector2i) -> Vector2i:
 	if direction == Vector2i.UP: return TILE_ARROW_UP
@@ -311,6 +342,7 @@ func initiliaze_grid() -> void:
 			or is_tile_in_list(current_atlas_coords, JAGGY_WALL_ORANGE_ATLAS_COORDS) \
 			or is_tile_in_list(current_atlas_coords, RAMP_ORANGE_ATLAS_COORDS):
 				grid_data[offset_pos.x][offset_pos.y]["obstructed"] = true
+				floor_tile_map_layer.erase_cell(current_tile_pos)
 
 			current_atlas_coords = items_tile_map_layer.get_cell_atlas_coords(current_tile_pos)
 			if is_tile_in_list(current_atlas_coords, TREASURE_BOX_ATLAS_COORDS):

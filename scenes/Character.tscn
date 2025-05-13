@@ -1,9 +1,10 @@
-[gd_scene load_steps=32 format=4 uid="uid://ckuk6qkrohy0l"]
+[gd_scene load_steps=33 format=4 uid="uid://ckuk6qkrohy0l"]
 
 [ext_resource type="Script" uid="uid://cj5nepxaixcrb" path="res://scripts/character.gd" id="1_3i3nt"]
 [ext_resource type="Script" uid="uid://cyjj3nyqr8e3y" path="res://addons/state_machine_nodes/state_machine.gd" id="2_apuoc"]
 [ext_resource type="Script" uid="uid://debxvclwdaeju" path="res://scripts/state/idle.gd" id="3_rguqb"]
 [ext_resource type="Script" uid="uid://iosln11sca7p" path="res://scripts/state/run.gd" id="4_rguqb"]
+[ext_resource type="Texture2D" uid="uid://bhlhni4a88w7o" path="res://assets/character/wall light2.png" id="5_pry4r"]
 
 [sub_resource type="Animation" id="Animation_53v7d"]
 length = 0.1
@@ -449,6 +450,8 @@ position = Vector2(0, -70)
 shape = SubResource("CapsuleShape2D_3i3nt")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 2
+y_sort_enabled = true
 texture_filter = 1
 texture = SubResource("PortableCompressedTexture2D_0kroj")
 offset = Vector2(0, -200)
@@ -476,3 +479,8 @@ metadata/_aseprite_wizard_config_ = {
 "source": "res://assets/character/character_sheet.aseprite"
 }
 metadata/_aseprite_wizard_source_file_hash_ = "8eeb3438578dd2453064ad5751e64ded"
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+position = Vector2(0, -76)
+texture = ExtResource("5_pry4r")
+texture_scale = 5.0

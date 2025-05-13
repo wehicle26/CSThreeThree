@@ -3,6 +3,7 @@ extends CharacterBody2D
 class_name Explorer
 @export var movement_speed = 300.0
 @onready var navigation_agent_2d = $NavigationAgent2D
+@onready var animation_player = $AnimationPlayer
 
 var next_path_position: Vector2
 var facing_direction: int

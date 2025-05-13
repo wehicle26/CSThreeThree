@@ -15,7 +15,7 @@ credits_packed_scene = ExtResource("4_0jpat")
 bus = &"Master"
 
 [node name="TitleLabel" parent="MenuContainer/TitleMargin/TitleContainer" index="0"]
-text = "Temple Maze in the Desert 2 Rebüted"
+text = "GWJ_81"
 
 [node name="SubTitleLabel" parent="MenuContainer/SubTitleMargin/SubTitleContainer" index="0"]
 text = "by Chiminea Crew"

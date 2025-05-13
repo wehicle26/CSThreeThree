@@ -20,8 +20,11 @@ text = "Tutorial"
 visible = true
 
 [node name="DescriptionLabel" parent="MenuPanelContainer/MarginContainer/BoxContainer/DescriptionMargin" index="0"]
-text = "[center]Progress is saved.
-Pressing Continue from the main menu will load the last level played.[/center]"
+text = "[center]The explorer moves 10 squares each turn.
+You act after him.
+Place obstacles to block his path.
+You may place up to 2 per turn.
+[/center]"
 fit_content = true
 
 [node name="CloseButton" parent="MenuPanelContainer/MarginContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="0"]
