@@ -73,14 +73,16 @@ func _process(_delta):
 
 func execute_explorer_turn():
 	var blockade_broken = check_for_blockade()
-	if not blockade_broken.is_empty():
-		var explorer_pos = await move_explorer(blockade_broken, blockade_broken.size())
-		break_blockade(explorer_pos)
-		return
 
 	calculate_distances_from_target()
 	update_mouse_tooltip(explorer.global_position)
-	move_explorer_default()
+
+	var offset_pos = last_tile_path[0] - grid_offset
+	if not blockade_broken.is_empty() and is_within_grid(offset_pos) and distance_to_treasure_grid[offset_pos.x][offset_pos.y] <= PATH_ARROW_INTERVAL:
+		var explorer_pos = await move_explorer(blockade_broken, blockade_broken.size())
+		break_blockade(explorer_pos)
+	else:
+		move_explorer_default()
 
 func break_blockade(coords):
 	var info = get_grid_info(coords)
