@@ -9,6 +9,7 @@ class_name Level
 @onready var mouse_tooltip_label = $CanvasLayer/MouseTooltipLabel
 @onready var top_down_camera_2d = $TopDownCamera2D
 @onready var initial_spawn_position: Marker2D = $InitialSpawnPosition
+@onready var black_overlay: CanvasModulate = $CanvasModulate
 var character_scene = preload("Character.tscn")
 
 const FLOOR_WHITE_ATLAS_COORDS: Array = [Vector2i(28, 2), Vector2i(29, 2), Vector2i(30, 2), Vector2i(31, 2)]
@@ -48,6 +49,7 @@ var player_input_enabled: bool = false
 var num_blocks = 1
 
 func _ready():
+	black_overlay.show()
 	initiliaze_grid()
 	spawn_unit(initial_spawn_position.global_position)
 	calculate_distances_from_target()
@@ -71,7 +73,11 @@ func _process(_delta):
 func execute_explorer_turn():
 	calculate_distances_from_target()
 	update_mouse_tooltip(explorer.global_position)
+	break_blockade()
 	move_explorer()
+
+func break_blockade():
+	pass
 
 func move_explorer():
 	full_tile_path.pop_front()
@@ -114,6 +120,7 @@ func place_wall(wall_grid_coords: Vector2i):
 		return
 
 	tile_data["obstructed"] = true
+	tile_data["blockade"] = true
 	set_grid_info(wall_grid_coords, tile_data)
 	walls_tile_map_layer.set_cell(wall_grid_coords, source_id, WALL_ORANGE_ATLAS_COORDS.pick_random())
 	walls_placed.append({
@@ -187,7 +194,7 @@ func update_mouse_tooltip(mouse_pos: Vector2):
 			debug_text += "\nDistance to Treasure: %s" % [distance_to_treasure]
 
 			mouse_tooltip_label.text = debug_text
-			mouse_tooltip_label.show()
+			#mouse_tooltip_label.show()
 
 		else:
 			mouse_tooltip_label.hide()
@@ -320,6 +327,7 @@ func initiliaze_grid() -> void:
 			grid_data[x][y] = {
 				"walkable": false,
 				"obstructed": false,
+				"blockade": false,
 				"treasure": false
 			}
 			distance_to_treasure_grid[x][y] = INF
@@ -337,10 +345,7 @@ func initiliaze_grid() -> void:
 				grid_data[offset_pos.x][offset_pos.y]["obstructed"] = true
 
 			current_atlas_coords = walls_tile_map_layer.get_cell_atlas_coords(current_tile_pos)
-			if is_tile_in_list(current_atlas_coords, WALL_ORANGE_ATLAS_COORDS) \
-			or is_tile_in_list(current_atlas_coords, HALF_WALL_ORANGE_ATLAS_COORDS) \
-			or is_tile_in_list(current_atlas_coords, JAGGY_WALL_ORANGE_ATLAS_COORDS) \
-			or is_tile_in_list(current_atlas_coords, RAMP_ORANGE_ATLAS_COORDS):
+			if current_atlas_coords != Vector2i(-1, -1):
 				grid_data[offset_pos.x][offset_pos.y]["obstructed"] = true
 				floor_tile_map_layer.erase_cell(current_tile_pos)
 

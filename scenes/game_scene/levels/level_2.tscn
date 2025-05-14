@@ -16,6 +16,8 @@ texture = ExtResource("2_qga8p")
 texture_scale = 5.0
 
 [node name="CanvasModulate" type="CanvasModulate" parent="Level" index="1"]
+unique_name_in_owner = true
+visible = false
 position = Vector2(0, -10)
 color = Color(0, 0, 0, 1)
 

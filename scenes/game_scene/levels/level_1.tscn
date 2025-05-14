@@ -165,5 +165,8 @@ metadata/_custom_type_script = "uid://dsnjlxvj4s1uu"
 script = ExtResource("9_hehv2")
 metadata/_custom_type_script = "uid://dsnjlxvj4s1uu"
 
+[node name="CanvasModulate" type="CanvasModulate" parent="Level"]
+visible = false
+
 [connection signal="pressed" from="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer2/TutorialButton" to="." method="_on_tutorial_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer2/NextTurnButton" to="." method="_on_next_turn_button_pressed"]
