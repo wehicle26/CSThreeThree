@@ -47,6 +47,7 @@ var grid_offset = Vector2i.ZERO
 var debug_text = ""
 var player_input_enabled: bool = false
 var num_blocks = 1
+var reached_treasure: bool = false
 
 func _ready():
 	black_overlay.show()
@@ -71,15 +72,65 @@ func _process(_delta):
 	pass
 
 func execute_explorer_turn():
+	var blockade_broken = check_for_blockade()
+	if not blockade_broken.is_empty():
+		var explorer_pos = await move_explorer(blockade_broken, blockade_broken.size())
+		break_blockade(explorer_pos)
+		return
+
 	calculate_distances_from_target()
 	update_mouse_tooltip(explorer.global_position)
-	break_blockade()
-	move_explorer()
+	move_explorer_default()
 
-func break_blockade():
-	pass
+func break_blockade(coords):
+	var info = get_grid_info(coords)
+	info["obstructed"] = false
+	info["blockade"] = false
+	set_grid_info(coords, info)
+	walls_tile_map_layer.erase_cell(coords)
 
-func move_explorer():
+func check_for_blockade() -> Array:
+	var current_tile_pos = world_to_grid(explorer.global_position)
+
+	for direction in DIRECTIONS:
+		var neighbor_pos = current_tile_pos + direction
+		var neighbor_pos_offset = neighbor_pos - grid_offset
+
+		if is_within_grid(neighbor_pos_offset):
+			if get_grid_info(neighbor_pos)["blockade"]:
+				return [neighbor_pos]
+
+	var path_to_blockade = full_tile_path
+	#path_to_blockade.reverse()
+	var i = 0
+	for tile in path_to_blockade:
+		i += 1
+		if i >= PATH_ARROW_INTERVAL:
+			break
+		var offset_pos = tile - grid_offset
+		if is_within_grid(offset_pos):
+			if get_grid_info(tile)["blockade"]:
+				return path_to_blockade.slice(0, i)
+	
+	return []
+
+func move_explorer(tile_path, num_tiles_to_move):
+	var coords = tile_path.pop_front()
+	for i in range(num_tiles_to_move):
+		if coords == null:
+			explorer_win()
+			break
+		#var tween := create_tween()
+		#tween.tween_property(explorer, "global_position", grid_to_world(coords), .2)
+		#await tween.finished
+		explorer.set_movement_target(grid_to_world(coords))
+		await get_tree().create_timer(.4).timeout
+		if tile_path.is_empty():
+			return coords
+		coords = tile_path.pop_front()
+	return coords
+
+func move_explorer_default():
 	full_tile_path.pop_front()
 	var coords = full_tile_path.pop_front()
 	for i in range(PATH_ARROW_INTERVAL):
@@ -92,6 +143,7 @@ func move_explorer():
 		explorer.set_movement_target(grid_to_world(coords))
 		await get_tree().create_timer(.4).timeout
 		coords = full_tile_path.pop_front()
+	return coords
 
 func explorer_win():
 	get_parent().level_won.emit()
@@ -171,6 +223,9 @@ func update_block_tile_highlight(mouse_pos: Vector2):
 				walls_tile_map_layer.set_cell(mouse_grid_pos, source_id, WALL_ORANGE_ATLAS_COORDS.pick_random())
 				last_hovered_grid_pos = mouse_grid_pos
 
+func clear_block_tile_highlight() -> void:
+	walls_tile_map_layer.erase_cell(last_hovered_grid_pos)
+
 func update_mouse_tooltip(mouse_pos: Vector2):
 	var mouse_grid_pos = world_to_grid(mouse_pos)
 	var path_highlight_info: Array[Dictionary] = []
@@ -241,6 +296,7 @@ func calculate_optimal_path(dist, tile_pos) -> Array[Dictionary]:
 
 		if path_found and dist == 0:
 			pass
+			#reached_treasure = true
 	
 	elif dist == 0:
 		pass

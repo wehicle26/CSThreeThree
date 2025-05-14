@@ -26,6 +26,7 @@ func _enter_state(_old_state: StringName, _params: Dictionary) -> void:
 
 func _exit_state(_new_state: StringName, _params: Dictionary) -> void:
     level.player_input_enabled = false
+    level.clear_block_tile_highlight()
 
 func _end_turn():
     enter_state("ExplorerTurn")
