@@ -78,11 +78,14 @@ func execute_explorer_turn():
 	update_mouse_tooltip(explorer.global_position)
 
 	var offset_pos = last_tile_path[0] - grid_offset
-	if not blockade_broken.is_empty() and is_within_grid(offset_pos) and distance_to_treasure_grid[offset_pos.x][offset_pos.y] <= PATH_ARROW_INTERVAL:
+	if distance_to_treasure_grid[offset_pos.x][offset_pos.y] <= PATH_ARROW_INTERVAL:
+		move_explorer_default()
+	elif not blockade_broken.is_empty() and is_within_grid(offset_pos):
 		var explorer_pos = await move_explorer(blockade_broken, blockade_broken.size())
 		break_blockade(explorer_pos)
 	else:
 		move_explorer_default()
+	
 
 func break_blockade(coords):
 	var info = get_grid_info(coords)
@@ -318,7 +321,7 @@ func show_debug_path(path_info: Array[Dictionary]):
 		var tile_to_set = info["tile"]
 
 		if tile_to_set != Vector2i(-1, -1) and index % PATH_ARROW_INTERVAL == 0:
-			highlight_path.set_cell(coords, source_id, tile_to_set)
+			#highlight_path.set_cell(coords, source_id, tile_to_set)
 			last_tile_path.append(coords)
 		full_tile_path.append(coords)
 		index += 1
