@@ -17,7 +17,7 @@ func _exit_state(_new_state: StringName, _params: Dictionary) -> void:
     pass
 
 func _start_round():
-    enter_state("ExplorerTurn")
+    enter_state("PlayerTurn")
 
 func _physics_process(_delta: float) -> void:
     pass

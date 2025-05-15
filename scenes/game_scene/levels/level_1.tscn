@@ -157,12 +157,12 @@ metadata/_custom_type_script = "uid://cyjj3nyqr8e3y"
 script = ExtResource("10_ua84b")
 metadata/_custom_type_script = "uid://dsnjlxvj4s1uu"
 
-[node name="ExplorerTurn" type="Node" parent="Level/StateMachine"]
-script = ExtResource("10_27a66")
-metadata/_custom_type_script = "uid://dsnjlxvj4s1uu"
-
 [node name="PlayerTurn" type="Node" parent="Level/StateMachine"]
 script = ExtResource("9_hehv2")
+metadata/_custom_type_script = "uid://dsnjlxvj4s1uu"
+
+[node name="ExplorerTurn" type="Node" parent="Level/StateMachine"]
+script = ExtResource("10_27a66")
 metadata/_custom_type_script = "uid://dsnjlxvj4s1uu"
 
 [node name="CanvasModulate" type="CanvasModulate" parent="Level"]
