@@ -30,7 +30,7 @@ const TILE_ARROW_DOWN = Vector2i(58, 3)
 const TILE_ARROW_LEFT = Vector2i(59, 3)
 const INF = 1e9
 const DIRECTIONS = [Vector2i.DOWN, Vector2i.UP, Vector2i.RIGHT, Vector2i.LEFT]
-const PATH_ARROW_INTERVAL = 15
+const PATH_ARROW_INTERVAL = 10
 
 var explorer: Explorer
 var initial_treasure_box_placement_tile = Vector2i(0, 0)
@@ -54,6 +54,7 @@ func _ready():
 	initiliaze_grid()
 	spawn_unit(initial_spawn_position.global_position)
 	calculate_distances_from_target()
+	update_mouse_tooltip(explorer.global_position)
 	mouse_tooltip_label.hide()
 	top_down_camera_2d.target_position = initial_spawn_position.global_position
 	var tween := create_tween()
@@ -72,17 +73,21 @@ func _process(_delta):
 	pass
 
 func execute_explorer_turn():
-	var blockade_broken = check_for_blockade()
+	var blockade_broken = []
+	if not full_tile_path.is_empty():
+		blockade_broken = check_for_blockade()
 
-	calculate_distances_from_target()
-	update_mouse_tooltip(explorer.global_position)
-
-	var offset_pos = last_tile_path[0] - grid_offset
-	if not blockade_broken.is_empty() and is_within_grid(offset_pos) and distance_to_treasure_grid[offset_pos.x][offset_pos.y] <= PATH_ARROW_INTERVAL:
+	var offset_pos = full_tile_path[0] - grid_offset
+	if distance_to_treasure_grid[offset_pos.x][offset_pos.y] <= PATH_ARROW_INTERVAL:
+		move_explorer_default()
+	elif not blockade_broken.is_empty() and is_within_grid(offset_pos):
 		var explorer_pos = await move_explorer(blockade_broken, blockade_broken.size())
 		break_blockade(explorer_pos)
 	else:
+		calculate_distances_from_target()
+		update_mouse_tooltip(explorer.global_position)
 		move_explorer_default()
+	
 
 func break_blockade(coords):
 	var info = get_grid_info(coords)
@@ -171,6 +176,10 @@ func place_wall(wall_grid_coords: Vector2i):
 	
 	if tile_data["treasure"]:
 		push_error("Cannot place wall on treasure.")
+		return
+
+	if wall_grid_coords == world_to_grid(explorer.global_position):
+		push_error("Cannot place wall on explorer.")
 		return
 
 	tile_data["obstructed"] = true
@@ -318,7 +327,7 @@ func show_debug_path(path_info: Array[Dictionary]):
 		var tile_to_set = info["tile"]
 
 		if tile_to_set != Vector2i(-1, -1) and index % PATH_ARROW_INTERVAL == 0:
-			highlight_path.set_cell(coords, source_id, tile_to_set)
+			#highlight_path.set_cell(coords, source_id, tile_to_set)
 			last_tile_path.append(coords)
 		full_tile_path.append(coords)
 		index += 1
