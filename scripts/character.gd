@@ -14,7 +14,8 @@ func _ready() -> void:
 	set_facing_direction(Vector2.ZERO)
 
 func set_movement_target(movement_target: Vector2):
-	navigation_agent_2d.set_target_position(movement_target)
+	if navigation_agent_2d:
+		navigation_agent_2d.set_target_position(movement_target)
 
 func set_facing_direction(direction: Vector2) -> int:
 	if direction.length_squared() < 0.01:
