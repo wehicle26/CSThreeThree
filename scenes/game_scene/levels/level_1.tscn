@@ -123,7 +123,12 @@ tile_set = ExtResource("6_85t3v")
 [node name="Items" type="TileMapLayer" parent="Level"]
 z_index = 4
 y_sort_enabled = true
-tile_map_data = PackedByteArray("AADC/+v/AQAUAAMAAAA=")
+tile_map_data = PackedByteArray("AADC/+v/AQAUAAMAAADD/+v/AQAUAAMAAAA=")
+tile_set = ExtResource("6_85t3v")
+
+[node name="Traps" type="TileMapLayer" parent="Level"]
+z_index = 4
+y_sort_enabled = true
 tile_set = ExtResource("6_85t3v")
 
 [node name="TopDownCamera2D" type="Camera2D" parent="Level"]
@@ -145,7 +150,7 @@ metadata/_edit_use_anchors_ = true
 
 [node name="InitialSpawnPosition" type="Marker2D" parent="Level"]
 unique_name_in_owner = true
-position = Vector2(-7550, -3906)
+position = Vector2(-7166, -4102)
 
 [node name="StateMachine" type="Node" parent="Level" node_paths=PackedStringArray("initial_state", "common_node")]
 script = ExtResource("8_ua84b")
@@ -167,6 +172,9 @@ metadata/_custom_type_script = "uid://dsnjlxvj4s1uu"
 
 [node name="CanvasModulate" type="CanvasModulate" parent="Level"]
 visible = false
+
+[node name="DirectionalLight2D" type="DirectionalLight2D" parent="Level"]
+energy = 0.34
 
 [connection signal="pressed" from="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer2/TutorialButton" to="." method="_on_tutorial_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer2/NextTurnButton" to="." method="_on_next_turn_button_pressed"]

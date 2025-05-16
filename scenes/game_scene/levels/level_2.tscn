@@ -24,8 +24,8 @@ tile_map_data = PackedByteArray("AADN//P/AQAAAAIAAADO//L/AQAvAAMAAADO//H/AQAvAAM
 [node name="Items" parent="Level" index="4"]
 tile_map_data = PackedByteArray("AADh/9f/AQAUAAMAAAA=")
 
-[node name="InitialSpawnPosition" parent="Level" index="7"]
+[node name="InitialSpawnPosition" parent="Level" index="8"]
 position = Vector2(-2573, -2448)
 
-[node name="CanvasModulate" parent="Level" index="9"]
+[node name="CanvasModulate" parent="Level" index="10"]
 color = Color(0, 0, 0, 1)
