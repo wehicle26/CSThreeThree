@@ -20,7 +20,7 @@ text = "Tutorial"
 visible = true
 
 [node name="DescriptionLabel" parent="MenuPanelContainer/MarginContainer/BoxContainer/DescriptionMargin" index="0"]
-text = "[center]You will generate 1 new obstacle every turn. And obstacles only last for 3 turns.
+text = "[center]You will generate 1 new obstacle every turn.
 Consider this, and use your moves wisely.
 [/center]"
 fit_content = true

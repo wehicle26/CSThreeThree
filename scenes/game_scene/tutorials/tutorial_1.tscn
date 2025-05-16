@@ -20,8 +20,8 @@ text = "Tutorial"
 visible = true
 
 [node name="DescriptionLabel" parent="MenuPanelContainer/MarginContainer/BoxContainer/DescriptionMargin" index="0"]
-text = "[center]You are the Temple entity.
-Your divine purpose is to thwart the explorer.[/center]"
+text = "[center]Pan the camera with the middle mouse button.
+Zoom in and out by scrolling up or down.[/center]"
 fit_content = true
 
 [node name="CloseButton" parent="MenuPanelContainer/MarginContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="0"]

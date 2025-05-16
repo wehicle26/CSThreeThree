@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c0skpfbwpkadb"]
+
+[ext_resource type="Texture2D" uid="uid://bhlhni4a88w7o" path="res://assets/character/wall light2.png" id="1_1hv62"]
+
+[node name="PointLight2D2" type="PointLight2D"]
+texture = ExtResource("1_1hv62")
