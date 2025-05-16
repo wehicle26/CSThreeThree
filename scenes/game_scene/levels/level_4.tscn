@@ -16,5 +16,5 @@ tile_map_data = PackedByteArray("AADU/+j/AQAvAAMAAADV/+j/AQAvAAMAAADW/+j/AQAzAAE
 [node name="Items" parent="Level" index="4"]
 tile_map_data = PackedByteArray("AADp/93/AQAUAAMAAAA=")
 
-[node name="InitialSpawnPosition" parent="Level" index="7"]
+[node name="InitialSpawnPosition" parent="Level" index="8"]
 position = Vector2(-1341, -873)

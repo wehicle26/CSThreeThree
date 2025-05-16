@@ -221,6 +221,7 @@ metadata/_aseprite_wizard_config_ = {
 metadata/_aseprite_wizard_source_file_hash_ = "67f8cf687a0b69c3d7e1f137259b82b8"
 
 [node name="PointLight2D" type="PointLight2D" parent="."]
+visible = false
 position = Vector2(0, -76)
 texture = ExtResource("5_pry4r")
 texture_scale = 5.0

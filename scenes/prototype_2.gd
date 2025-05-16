@@ -24,6 +24,7 @@ const RAMP_ORANGE_ATLAS_COORDS: Array = [Vector2i(48, 1), Vector2i(49, 1), Vecto
 const TREASURE_BOX_ATLAS_COORDS: Array = [Vector2i(20, 3), Vector2i(21, 3), Vector2i(22, 3), Vector2i(23, 3)]
 const TRAP_ATLAS_COORDS: Array = [Vector2i(28, 3)]
 const PLANT_ATLAS_COORDS: Array = [Vector2i(29, 3)]
+const BLOCKADE_ATLAS_COORDS: Array = [Vector2i(38, 1)]
 #Vector2i(30, 3), Vector2i(31, 3)
 # const TILE_ARROW_DOWN = Vector2i(52, 3)
 # const TILE_ARROW_RIGHT = Vector2i(53, 3)
