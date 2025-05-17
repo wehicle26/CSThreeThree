@@ -12,7 +12,7 @@ func _enter_state(_old_state: StringName, _params: Dictionary) -> void:
         top_level.next_turn.connect(_next_turn)
         init = true
 
-    level.execute_explorer_turn()
+    level.execute_explorer_turn(level.PATH_ARROW_INTERVAL)
     %NextTurnButton.text = "Next Turn"
     top_level.level_state.saved = true
     top_level.level_state.data = level.get_level_data()

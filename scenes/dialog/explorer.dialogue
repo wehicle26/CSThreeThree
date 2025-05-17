@@ -1,0 +1,11 @@
+~ start
+Samuel: Finally! I have arrived at the garden of Trapp Keep.
+Samuel: The garden's beauty is said to be unparalleled.
+Samuel: It remains to be seen.
+do execute_explorer_turn(10)
+~ entrance
+Samuel: Hmm...
+Samuel: Something feels off about this place.
+Samuel: It's too quiet here.
+do execute_explorer_turn(10)
+=> END

@@ -7,7 +7,7 @@
 
 [node name="MainMenu" instance=ExtResource("1_peecx")]
 script = ExtResource("2_ub2bi")
-game_scene_path = "res://scenes/game_scene/game_ui.tscn"
+game_scene_path = "uid://wbv8kqk5pkmo"
 options_packed_scene = ExtResource("3_x31ro")
 credits_packed_scene = ExtResource("4_0jpat")
 
@@ -15,7 +15,16 @@ credits_packed_scene = ExtResource("4_0jpat")
 bus = &"Master"
 
 [node name="TitleLabel" parent="MenuContainer/TitleMargin/TitleContainer" index="0"]
-text = "GWJ_81"
+anchors_preset = -1
+anchor_bottom = 0.22
+offset_bottom = -70.28
+text = "TRAPP
+KEEP"
 
 [node name="SubTitleLabel" parent="MenuContainer/SubTitleMargin/SubTitleContainer" index="0"]
+anchors_preset = -1
+anchor_top = 0.216
+anchor_bottom = 0.277
+offset_top = -0.0960007
+offset_bottom = -0.0120087
 text = "by Chiminea Crew"

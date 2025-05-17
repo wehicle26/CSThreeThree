@@ -27,5 +27,13 @@ tile_map_data = PackedByteArray("AADh/9f/AQAUAAMAAAA=")
 [node name="InitialSpawnPosition" parent="Level" index="8"]
 position = Vector2(-2573, -2448)
 
+[node name="InitLevel" parent="Level/StateMachine" index="0"]
+intro = false
+
 [node name="CanvasModulate" parent="Level" index="10"]
 color = Color(0, 0, 0, 1)
+
+[node name="DirectionalLight2D" parent="Level" index="11"]
+visible = false
+
+[editable path="CanvasLayer/ExampleBalloon"]

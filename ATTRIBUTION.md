@@ -2,7 +2,7 @@
 ## Collaborators
 
 ### Role
-MindlessRuff
+Programmer - MindlessRuff
 twosix
 2six
 two six
@@ -10,7 +10,7 @@ TwoSix
 two_six
 two6
 hatch26
-Danimaul
+Art - gg
   
 [Person w/ Link]()  
 

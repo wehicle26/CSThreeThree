@@ -1,9 +1,12 @@
-[gd_scene load_steps=18 format=3 uid="uid://d13eyufory5su"]
+[gd_scene load_steps=21 format=3 uid="uid://d13eyufory5su"]
 
 [ext_resource type="PackedScene" uid="uid://c6k5nnpbypshi" path="res://addons/maaacks_game_template/base/scenes/menus/main_menu/main_menu.tscn" id="1_rr1rn"]
 [ext_resource type="Script" uid="uid://deqodl8aboqrj" path="res://scenes/menus/main_menu/main_menu_with_animations.gd" id="2_sr523"]
 [ext_resource type="PackedScene" uid="uid://dh34mdqe3skns" path="res://scenes/menus/options_menu/master_options_menu_with_tabs.tscn" id="3_ixa71"]
 [ext_resource type="PackedScene" uid="uid://sdf5m08xw32j" path="res://scenes/credits/credits.tscn" id="4_2k5l7"]
+[ext_resource type="AudioStream" uid="uid://by1uiaviudmb5" path="res://assets/sounds/MNT_YTK_ui_chirp.wav" id="5_ixa71"]
+[ext_resource type="AudioStream" uid="uid://dai4jh075103s" path="res://assets/sounds/MNT_YTK_ui_slider_change.wav" id="6_2k5l7"]
+[ext_resource type="AudioStream" uid="uid://bvakytdgil1cr" path="res://assets/sounds/PL_BA_90_Harpsi_Loop_Wood_01_Cm.wav" id="7_2k5l7"]
 
 [sub_resource type="Animation" id="1"]
 resource_name = "Intro"
@@ -352,9 +355,14 @@ graph_offset = Vector2(-180.277, 49)
 [node name="MainMenu" instance=ExtResource("1_rr1rn")]
 script = ExtResource("2_sr523")
 level_select_packed_scene = null
-game_scene_path = "res://scenes/game_scene/game_ui.tscn"
+game_scene_path = "uid://do26ot6d00wqo"
 options_packed_scene = ExtResource("3_ixa71")
 credits_packed_scene = ExtResource("4_2k5l7")
+
+[node name="UISoundController" parent="." index="0"]
+button_hovered = ExtResource("5_ixa71")
+slider_drag_started = ExtResource("6_2k5l7")
+slider_drag_ended = ExtResource("6_2k5l7")
 
 [node name="MenuAnimationPlayer" type="AnimationPlayer" parent="." index="1"]
 libraries = {
@@ -367,7 +375,7 @@ anim_player = NodePath("../MenuAnimationPlayer")
 parameters/conditions/intro_done = false
 
 [node name="BackgroundMusicPlayer" parent="." index="3"]
-bus = &"Master"
+stream = ExtResource("7_2k5l7")
 
 [node name="VersionContainer" parent="VersionMargin" index="0"]
 modulate = Color(1, 1, 1, 0)
@@ -376,7 +384,7 @@ modulate = Color(1, 1, 1, 0)
 modulate = Color(1, 1, 1, 0)
 
 [node name="TitleLabel" parent="MenuContainer/TitleMargin/TitleContainer" index="0"]
-text = "GWJ_81"
+text = "TRAPP KEEP"
 
 [node name="SubTitleContainer" parent="MenuContainer/SubTitleMargin" index="0"]
 modulate = Color(1, 1, 1, 0)
