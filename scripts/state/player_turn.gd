@@ -11,6 +11,7 @@ func _enter_state(_old_state: StringName, _params: Dictionary) -> void:
         top_level = level.get_parent()
         top_level.end_player_turn.connect(_end_turn)
         level.num_blocks = 1
+        top_level.call_deferred("open_tutorials")
         init = true
     elif level.num_blocks < 2:
         level.num_blocks += 1

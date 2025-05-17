@@ -68,6 +68,7 @@ var debug_text = ""
 var player_input_enabled: bool = false
 var num_blocks = 0
 var reached_treasure: bool = false
+var camera_follow_explorer: bool = false
 
 func _ready():
 	black_overlay.show()
@@ -88,7 +89,8 @@ func _input(event):
 		place_wall(world_to_grid(top_down_camera_2d.get_global_mouse_position()))
 
 func _process(_delta):
-	pass
+	if camera_follow_explorer:
+		top_down_camera_2d.target_position = explorer.global_position
 
 func run_intro_scene():
 	DialogueManager.get_current_scene = func():
@@ -97,6 +99,8 @@ func run_intro_scene():
 	var dialogue_line = await DialogueManager.get_next_dialogue_line(resource, "start")
 	await DialogueManager.dialogue_ended
 	dialogue_line = await DialogueManager.get_next_dialogue_line(resource, "entrance")
+	await DialogueManager.dialogue_ended
+	dialogue_line = await DialogueManager.get_next_dialogue_line(resource, "garden")
 	await DialogueManager.dialogue_ended
 
 func execute_explorer_turn(movement_range):
@@ -120,8 +124,11 @@ func execute_explorer_turn(movement_range):
 			if get_grid_info(current_tile)["treasure"]:
 				explorer_win()
 	if current_tile != Vector2i(-1, -1):
+		camera_follow_explorer = true
 		explorer.set_movement_target(grid_to_world(current_tile))
-		await explorer.navigation_agent_2d.navigation_finished
+		if explorer.navigation_agent_2d:
+			await explorer.navigation_agent_2d.navigation_finished
+		camera_follow_explorer = false
 	
 	var offset_pos = current_tile - grid_offset
 	var distance_to_treasure = distance_to_treasure_grid[offset_pos.x][offset_pos.y]
