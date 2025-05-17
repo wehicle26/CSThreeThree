@@ -13,6 +13,7 @@ class_name Level
 @onready var second_position: Marker2D = $SecondMovement
 @onready var third_position: Marker2D = $ThirdMovement
 @onready var black_overlay: CanvasModulate = $CanvasModulate
+@onready var state_machine: StateMachine = $StateMachine
 var character_scene = preload("Character.tscn")
 var trap_light: PackedScene = preload("res://scenes/light_scene.tscn")
 var resource = load("res://scenes/dialog/explorer.dialogue")
@@ -106,6 +107,14 @@ func run_intro_scene():
 func execute_explorer_turn(movement_range):
 	calculate_distances_from_target()
 	calculate_ideal_path_to_treasure(explorer.global_position)
+	var offset_pos = world_to_grid(explorer.global_position) - grid_offset
+	var distance_to_treasure = distance_to_treasure_grid[offset_pos.x][offset_pos.y]
+	var explorer_win = false
+	var player_win = false
+	if distance_to_treasure <= movement_range:
+		explorer_win = true
+		if state_machine.get_node("InitLevel").intro:
+			player_win = true
 	var current_tile = Vector2i(-1, -1)
 	var trap = false
 	var plant = false
@@ -130,16 +139,19 @@ func execute_explorer_turn(movement_range):
 			await explorer.navigation_agent_2d.navigation_finished
 		camera_follow_explorer = false
 	
-	var offset_pos = current_tile - grid_offset
-	var distance_to_treasure = distance_to_treasure_grid[offset_pos.x][offset_pos.y]
+	offset_pos = current_tile - grid_offset
+	distance_to_treasure = distance_to_treasure_grid[offset_pos.x][offset_pos.y]
 	if trap:
 		player_win()
 		return
 	if plant:
 		pass
-		#explorer_temp_movement = 12
-	if distance_to_treasure <= movement_range:
+	if explorer_win:
 		explorer_win()
+	if player_win:
+		player_win()
+		#explorer_temp_movement = 12
+	
 	
 
 func break_blockade(coords):
@@ -265,6 +277,9 @@ func spawn_unit(spawn_position: Vector2):
 		explorer.global_position = grid_to_world(grid_pos)
 		add_sibling.call_deferred(explorer)
 		await explorer.ready
+		if not state_machine.get_node("InitLevel").intro:
+			pass
+			#explorer.light.show()
 		explorer.navigation_agent_2d.connect("navigation_finished", _on_navigation_finished)
 
 func update_block_tile_highlight(mouse_pos: Vector2):

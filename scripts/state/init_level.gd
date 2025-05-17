@@ -11,11 +11,14 @@ func _enter_state(_old_state: StringName, _params: Dictionary) -> void:
 		level = top_level.get_node("Level")
 		top_level.start_round.connect(_start_round)
 		init = true
-	
+	level.player_input_enabled = false
 	%NextTurnButton.text = "Start Round"
 	if intro:
 		level.run_intro_scene()
 		#top_level.call_deferred("open_tutorials")
+	#top_level.level_state.saved = true
+	#top_level.level_state.current_level_state = level.get_level_data()
+	GlobalState.save()
 
 func _exit_state(_new_state: StringName, _params: Dictionary) -> void:
 	pass

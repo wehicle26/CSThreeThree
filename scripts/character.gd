@@ -4,6 +4,7 @@ class_name Explorer
 @export var movement_speed = 300.0
 @onready var navigation_agent_2d = $NavigationAgent2D
 @onready var animation_player = $AnimationPlayer
+@onready var light: PointLight2D = $PointLight2D
 
 var next_path_position: Vector2
 var facing_direction: int
