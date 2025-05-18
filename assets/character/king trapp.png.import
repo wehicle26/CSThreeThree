@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d22xmibfmowvm"
-path="res://.godot/imported/keep.png-cda6918166a4947a65d2cd10079c38b5.ctex"
+uid="uid://bdyewy1gnscrc"
+path="res://.godot/imported/king trapp.png-4dca92d650c6427e7a1e02782b0080f0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/keep.png"
-dest_files=["res://.godot/imported/keep.png-cda6918166a4947a65d2cd10079c38b5.ctex"]
+source_file="res://assets/character/king trapp.png"
+dest_files=["res://.godot/imported/king trapp.png-4dca92d650c6427e7a1e02782b0080f0.ctex"]
 
 [params]
 

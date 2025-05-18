@@ -16,6 +16,7 @@ func _enter_state(_old_state: StringName, _params: Dictionary) -> void:
     elif level.num_blocks < 2:
         level.num_blocks += 1
     
+    %NextTurnButton.disabled = false
     %BlockadeLabel.text = "Blockades: %d/3" % [level.num_blocks]
     level.player_input_enabled = true
     level.execute_player_turn()

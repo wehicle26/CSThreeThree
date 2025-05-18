@@ -12,7 +12,7 @@
 [ext_resource type="Script" uid="uid://dedftrkeydnae" path="res://addons/TopDownCamera2D/top_down_camera_2d.gd" id="7_8avtb"]
 [ext_resource type="Script" uid="uid://cyjj3nyqr8e3y" path="res://addons/state_machine_nodes/state_machine.gd" id="8_ua84b"]
 [ext_resource type="Script" uid="uid://b0rjcl4gh7qnt" path="res://scripts/state/player_turn.gd" id="9_hehv2"]
-[ext_resource type="Texture2D" uid="uid://7rsv0n514f71" path="res://assets/images/keep.png" id="9_m77gi"]
+[ext_resource type="Texture2D" uid="uid://d22xmibfmowvm" path="res://assets/images/keep.png" id="9_m77gi"]
 [ext_resource type="Script" uid="uid://df7f5w56r54ey" path="res://scripts/state/explorer_turn.gd" id="10_27a66"]
 [ext_resource type="Script" uid="uid://bkt7valp0sru4" path="res://scripts/state/init_level.gd" id="10_ua84b"]
 
@@ -80,32 +80,35 @@ theme_override_constants/separation = 32
 script = ExtResource("2_sycfm")
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 75)
 layout_mode = 2
 
 [node name="TutorialButton" type="Button" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 text = "Tutorial"
 
 [node name="InputDisplayLabel" type="Label" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer2"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 horizontal_alignment = 1
 script = ExtResource("3_pmyid")
 
-[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
-text = "Change Level State: "
-
 [node name="NextTurnButton" type="Button" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer2"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
+size_flags_horizontal = 10
 text = "End Turn"
 
 [node name="ExampleBalloon" parent="CanvasLayer" instance_placeholder="res://scenes/dialog/balloon.tscn"]
+visible = false
 
 [node name="Level" type="Node2D" parent="."]
 y_sort_enabled = true
 script = ExtResource("6_8avtb")
+is_intro_sequence = true
 
 [node name="Keep" type="Sprite2D" parent="Level"]
 z_index = 2

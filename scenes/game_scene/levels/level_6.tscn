@@ -7,6 +7,26 @@
 
 [node name="ExampleBalloon" parent="." index="2" instance=ExtResource("2_8dk0s")]
 
+[node name="HBoxContainer2" parent="CanvasLayer/MarginContainer/VBoxContainer" index="2"]
+custom_minimum_size = Vector2(0, 0)
+
+[node name="TutorialButton" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer2" index="0"]
+custom_minimum_size = Vector2(0, 0)
+
+[node name="InputDisplayLabel" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer2" index="1"]
+visible = true
+
+[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer2" index="2"]
+layout_mode = 2
+text = "Change Level State: "
+
+[node name="NextTurnButton" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer2" index="3"]
+custom_minimum_size = Vector2(0, 0)
+size_flags_horizontal = 1
+
+[node name="ExampleBalloon" parent="CanvasLayer" index="1"]
+visible = true
+
 [node name="PointLight2D" parent="Level" index="0"]
 position = Vector2(1673, -4064)
 
