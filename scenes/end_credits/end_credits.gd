@@ -7,6 +7,7 @@ extends Credits
 func _end_reached() -> void:
 	%EndMessagePanel.show()
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	GlobalState.reset()
 	super._end_reached()
 
 func _on_MenuButton_pressed() -> void:
