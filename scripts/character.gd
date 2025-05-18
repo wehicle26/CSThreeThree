@@ -4,6 +4,9 @@ class_name Explorer
 @export var movement_speed = 300.0
 @onready var navigation_agent_2d = $NavigationAgent2D
 @onready var animation_player = $AnimationPlayer
+@onready var light: PointLight2D = $PointLight2D
+
+@export var light_on = false
 
 var next_path_position: Vector2
 var facing_direction: int
@@ -13,6 +16,11 @@ func _ready() -> void:
 	navigation_agent_2d.velocity_computed.connect(Callable(_on_velocity_computed))
 	set_facing_direction(Vector2.ZERO)
 
+func set_light_on():
+	if light:
+		light.enabled = true
+		light.show()
+
 func set_movement_target(movement_target: Vector2):
 	if navigation_agent_2d:
 		navigation_agent_2d.set_target_position(movement_target)
@@ -21,14 +29,19 @@ func set_facing_direction(direction: Vector2) -> int:
 	if direction.length_squared() < 0.01:
 		return last_direction
 		
-	var angle = direction.normalized().angle() + (PI / 8.0) / 2.0
-	angle = wrapf(angle, 0.0, TAU)
-	
-	var slice = int(angle / (PI / 4.0))
-	
-	var iso_index = (slice + 1) % 8
-	last_direction = iso_index
-	
+	direction = direction.normalized()
+
+	var iso_index = 0
+
+	if direction.y < 0 and direction.x > 0:
+		iso_index = 0
+	elif direction.y > 0 and direction.x > 0:
+		iso_index = 2
+	elif direction.y > 0 and direction.x < 0:
+		iso_index = 4
+	else:
+		iso_index = 6
+
 	return iso_index
 	
 func _physics_process(_delta):

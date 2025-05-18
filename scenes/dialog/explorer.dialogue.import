@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=15
+type="Resource"
+uid="uid://bdem73wonisy2"
+path="res://.godot/imported/explorer.dialogue-3410057ef5ca22129cd709774fff45ec.tres"
+
+[deps]
+
+source_file="res://scenes/dialog/explorer.dialogue"
+dest_files=["res://.godot/imported/explorer.dialogue-3410057ef5ca22129cd709774fff45ec.tres"]
+
+[params]
+
+defaults=true

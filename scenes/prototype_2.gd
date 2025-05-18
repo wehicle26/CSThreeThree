@@ -10,16 +10,30 @@ class_name Level
 @onready var mouse_tooltip_label = $CanvasLayer/MouseTooltipLabel
 @onready var top_down_camera_2d = $TopDownCamera2D
 @onready var initial_spawn_position: Marker2D = $InitialSpawnPosition
+@onready var second_position: Marker2D = $SecondMovement
+@onready var third_position: Marker2D = $ThirdMovement
 @onready var black_overlay: CanvasModulate = $CanvasModulate
 var character_scene = preload("Character.tscn")
 var trap_light: PackedScene = preload("res://scenes/light_scene.tscn")
+var resource = load("res://scenes/dialog/explorer.dialogue")
 
-const FLOOR_WHITE_ATLAS_COORDS: Array = [Vector2i(28, 2), Vector2i(29, 2), Vector2i(30, 2), Vector2i(31, 2)]
+const FLOOR_WHITE_ATLAS_COORDS: Array = [Vector2i(14, 2), Vector2i(15, 2), Vector2i(16, 2), Vector2i(17, 2), \
+	Vector2i(18, 2), Vector2i(19, 2), Vector2i(20, 2), Vector2i(21, 2), Vector2i(22, 2), \
+	Vector2i(28, 2), Vector2i(29, 2), Vector2i(30, 2), Vector2i(31, 2), \
+	Vector2i(0, 3), Vector2i(1, 3), Vector2i(2, 3), Vector2i(3, 3), \
+	Vector2i(4, 3), Vector2i(5, 3), Vector2i(6, 3), Vector2i(7, 3), \
+	Vector2i(8, 3), Vector2i(9, 3), Vector2i(10, 3), Vector2i(11, 3), \
+	Vector2i(12, 3), Vector2i(13, 3), Vector2i(14, 3), Vector2i(15, 3), \
+	Vector2i(16, 3), Vector2i(17, 3), Vector2i(18, 3), Vector2i(19, 3), \
+]
 const FLOOR_ORANGE_ATLAS_COORDS: Array = [Vector2i(4, 2), Vector2i(5, 2), Vector2i(6, 2), Vector2i(7, 2)]
-const WALL_ORANGE_ATLAS_COORDS: Array = [Vector2i(48, 3), Vector2i(49, 3), Vector2i(50, 3), Vector2i(51, 3)]
+const WALL_ORANGE_ATLAS_COORDS: Array = [Vector2i(47, 3), Vector2i(48, 3), Vector2i(49, 3), Vector2i(50, 3), \
+Vector2i(51, 3), Vector2i(50, 0), Vector2i(51, 0), Vector2i(49, 1), Vector2i(51, 3), Vector2i(51, 1), \
+Vector2i(0, 2), Vector2i(1, 2), Vector2i(2, 2), Vector2i(3, 2), Vector2i(9, 2), Vector2i(11, 2)]
 const HALF_WALL_ORANGE_ATLAS_COORDS: Array = [Vector2i(44, 3), Vector2i(45, 3), Vector2i(46, 3), Vector2i(47, 3)]
-const JAGGY_WALL_ORANGE_ATLAS_COORDS: Array = [Vector2i(31, 1), Vector2i(32, 1), Vector2i(33, 1), Vector2i(35, 1),\
-Vector2i(36, 1), Vector2i(37, 1), Vector2i(38, 1), Vector2i(39, 1)]
+const JAGGY_WALL_ORANGE_ATLAS_COORDS: Array = [Vector2i(31, 1), Vector2i(32, 1), Vector2i(35, 1), \
+Vector2i(36, 1), Vector2i(37, 1), Vector2i(39, 1), Vector2i(10, 2), Vector2i(23, 2), \
+Vector2i(24, 2), Vector2i(25, 2), Vector2i(26, 2), Vector2i(27, 2), Vector2i(42, 1), Vector2i(43, 1)]
 const RAMP_ORANGE_ATLAS_COORDS: Array = [Vector2i(48, 1), Vector2i(49, 1), Vector2i(50, 1), Vector2i(51, 1)]
 const TREASURE_BOX_ATLAS_COORDS: Array = [Vector2i(20, 3), Vector2i(21, 3), Vector2i(22, 3), Vector2i(23, 3)]
 const TRAP_ATLAS_COORDS: Array = [Vector2i(28, 3)]
@@ -38,6 +52,7 @@ const INF = 1e9
 const DIRECTIONS = [Vector2i.DOWN, Vector2i.UP, Vector2i.RIGHT, Vector2i.LEFT]
 const PATH_ARROW_INTERVAL = 10
 
+@export var intro = false
 var explorer: Explorer
 var initial_treasure_box_placement_tile = Vector2i(0, 0)
 var distance_to_treasure_grid = []
@@ -54,6 +69,7 @@ var debug_text = ""
 var player_input_enabled: bool = false
 var num_blocks = 0
 var reached_treasure: bool = false
+var camera_follow_explorer: bool = false
 
 func _ready():
 	black_overlay.show()
@@ -65,8 +81,6 @@ func _ready():
 	top_down_camera_2d.target_position = initial_spawn_position.global_position
 	var tween := create_tween()
 	tween.tween_property(top_down_camera_2d, "target_zoom", Vector2(0.5, 0.5), 1)
-	#tween.tween_property(top_down_camera_2d, "target_position", Vector2(-3500.0, -2200.0), 2)
-	#await tween.finished
 
 func _input(event):
 	if event is InputEventMouseMotion and player_input_enabled:
@@ -76,20 +90,40 @@ func _input(event):
 		place_wall(world_to_grid(top_down_camera_2d.get_global_mouse_position()))
 
 func _process(_delta):
-	pass
+	if camera_follow_explorer:
+		top_down_camera_2d.target_position = explorer.global_position
 
-func execute_explorer_turn():
-	if not explorer.navigation_agent_2d.is_connected("navigation_finished", _on_navigation_finished):
-		explorer.navigation_agent_2d.connect("navigation_finished", _on_navigation_finished)
+func run_intro_scene():
+	DialogueManager.get_current_scene = func():
+		return self
+	DialogueManager.show_dialogue_balloon(resource, "start")
+	var dialogue_line = await DialogueManager.get_next_dialogue_line(resource, "start")
+	await DialogueManager.dialogue_ended
+	dialogue_line = await DialogueManager.get_next_dialogue_line(resource, "entrance")
+	await DialogueManager.dialogue_ended
+	dialogue_line = await DialogueManager.get_next_dialogue_line(resource, "garden")
+	await DialogueManager.dialogue_ended
+
+func execute_explorer_turn(movement_range):
 	calculate_distances_from_target()
 	calculate_ideal_path_to_treasure(explorer.global_position)
+	var offset_pos = world_to_grid(explorer.global_position) - grid_offset
+	var distance_to_treasure = distance_to_treasure_grid[offset_pos.x][offset_pos.y]
+	var explorer_win = false
+	var player_win = false
+	if distance_to_treasure <= movement_range:
+		explorer_win = true
+		if intro:
+			player_win = true
+	if not intro:
+		explorer.set_light_on()
 	var current_tile = Vector2i(-1, -1)
 	var trap = false
 	var plant = false
 	if full_tile_path.is_empty():
 		player_win()
 		return
-	for i in range(PATH_ARROW_INTERVAL):
+	for i in range(movement_range):
 		if not full_tile_path.is_empty() and i <= full_tile_path.size() - 1:
 			current_tile = full_tile_path[i]
 			if get_grid_info(current_tile)["trap"]:
@@ -101,19 +135,26 @@ func execute_explorer_turn():
 			if get_grid_info(current_tile)["treasure"]:
 				explorer_win()
 	if current_tile != Vector2i(-1, -1):
+		camera_follow_explorer = true
 		explorer.set_movement_target(grid_to_world(current_tile))
-		await explorer.navigation_agent_2d.navigation_finished
+		if explorer.navigation_agent_2d:
+			await explorer.navigation_agent_2d.navigation_finished
+		camera_follow_explorer = false
 	
-	var offset_pos = current_tile - grid_offset
-	var distance_to_treasure = distance_to_treasure_grid[offset_pos.x][offset_pos.y]
+	offset_pos = current_tile - grid_offset
+	distance_to_treasure = distance_to_treasure_grid[offset_pos.x][offset_pos.y]
 	if trap:
 		player_win()
 		return
 	if plant:
 		pass
-		#explorer_temp_movement = 12
-	if distance_to_treasure <= PATH_ARROW_INTERVAL:
+	if player_win:
+		player_win()
+		return
+	if explorer_win:
 		explorer_win()
+		#explorer_temp_movement = 12
+	
 	
 
 func break_blockade(coords):
@@ -200,8 +241,11 @@ func place_wall(wall_grid_coords: Vector2i):
 	tile_data["obstructed"] = true
 	tile_data["blockade"] = true
 	set_grid_info(wall_grid_coords, tile_data)
-	walls_tile_map_layer.set_cell(wall_grid_coords, source_id, WALL_ORANGE_ATLAS_COORDS.pick_random())
+	walls_tile_map_layer.set_cell(wall_grid_coords, source_id, BLOCKADE_ATLAS_COORDS.pick_random())
 	floor_tile_map_layer.erase_cell(wall_grid_coords)
+	var obstacle = NavigationObstacle2D.new()
+	add_child(obstacle)
+	obstacle.global_position = grid_to_world(wall_grid_coords)
 	walls_placed.append({
 		"wall_grid_coords": wall_grid_coords, 
 		"tile_data": tile_data})
@@ -215,7 +259,7 @@ func load_level_data(data: Dictionary):
 	top_down_camera_2d.target_zoom = data["camera_zoom"]
 	for blockade in data["walls_placed"]:
 		set_grid_info(blockade["wall_grid_coords"], blockade["tile_data"])
-		walls_tile_map_layer.set_cell(blockade["wall_grid_coords"], source_id, WALL_ORANGE_ATLAS_COORDS.pick_random())
+		walls_tile_map_layer.set_cell(blockade["wall_grid_coords"], source_id, BLOCKADE_ATLAS_COORDS.pick_random())
 
 func get_level_data() -> Dictionary:
 	return {
@@ -235,6 +279,8 @@ func spawn_unit(spawn_position: Vector2):
 		explorer = character_scene.instantiate()
 		explorer.global_position = grid_to_world(grid_pos)
 		add_sibling.call_deferred(explorer)
+		await explorer.ready
+		explorer.navigation_agent_2d.connect("navigation_finished", _on_navigation_finished)
 
 func update_block_tile_highlight(mouse_pos: Vector2):
 	var mouse_grid_pos = world_to_grid(mouse_pos)
@@ -250,7 +296,7 @@ func update_block_tile_highlight(mouse_pos: Vector2):
 			if grid_info["obstructed"] == false and grid_info["treasure"] == false and grid_info["trap"] == false:
 				if last_hovered_grid_pos != Vector2i(-1, -1) and get_grid_info(last_hovered_grid_pos)["obstructed"] == false:
 					walls_tile_map_layer.erase_cell(last_hovered_grid_pos)
-				walls_tile_map_layer.set_cell(mouse_grid_pos, source_id, WALL_ORANGE_ATLAS_COORDS.pick_random())
+				walls_tile_map_layer.set_cell(mouse_grid_pos, source_id, BLOCKADE_ATLAS_COORDS.pick_random())
 				last_hovered_grid_pos = mouse_grid_pos
 
 func clear_block_tile_highlight() -> void:

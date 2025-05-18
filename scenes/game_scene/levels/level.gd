@@ -39,7 +39,8 @@ func _ready() -> void:
 		get_node("Level").load_level_data(level_state.data)
 		state_machine.enter_state(level_state.current_level_state)
 	if not level_state.tutorial_read:
-		open_tutorials()
+		pass
+		#open_tutorials()
 
 func _on_color_picker_button_color_changed(color : Color) -> void:
 	%BackgroundColor.color = color

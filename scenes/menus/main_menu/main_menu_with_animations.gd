@@ -4,12 +4,15 @@ extends MainMenu
 
 var level_select_scene : Node
 var animation_state_machine : AnimationNodeStateMachinePlayback
+@onready var music_player = $BackgroundMusicPlayer
 
 func load_game_scene() -> void:
+	music_player.queue_free()
 	GameState.start_game()
 	super.load_game_scene()
 
 func new_game() -> void:
+	music_player.queue_free()
 	GlobalState.reset()
 	load_game_scene()
 
@@ -63,6 +66,7 @@ func _ready() -> void:
 	animation_state_machine = $MenuAnimationTree.get("parameters/playback")
 
 func _on_continue_game_button_pressed() -> void:
+	music_player.queue_free()
 	load_game_scene()
 
 func _on_level_select_button_pressed() -> void:
