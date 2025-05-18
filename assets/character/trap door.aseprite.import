@@ -1,0 +1,14 @@
+[remap]
+
+importer="aseprite_wizard.plugin.noop"
+type="PackedDataContainer"
+uid="uid://cevumdpp100be"
+path="res://.godot/imported/trap door.aseprite-79ddd8c9a9fc05e27931c601f82b62ea.res"
+
+[deps]
+
+source_file="res://assets/character/trap door.aseprite"
+dest_files=["res://.godot/imported/trap door.aseprite-79ddd8c9a9fc05e27931c601f82b62ea.res"]
+
+[params]
+

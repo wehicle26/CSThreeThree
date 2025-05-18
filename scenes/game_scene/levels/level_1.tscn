@@ -109,7 +109,7 @@ script = ExtResource("6_8avtb")
 
 [node name="Keep" type="Sprite2D" parent="Level"]
 z_index = 2
-position = Vector2(-1629, -8152)
+position = Vector2(-3117, -6960)
 texture = ExtResource("9_m77gi")
 
 [node name="StateMachine" type="Node" parent="Level" node_paths=PackedStringArray("initial_state", "common_node")]
