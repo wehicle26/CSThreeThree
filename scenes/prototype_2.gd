@@ -115,8 +115,6 @@ func execute_explorer_turn(movement_range):
 		explorer_win = true
 		if intro:
 			player_win = true
-	if not intro:
-		explorer.set_light_on()
 	var current_tile = Vector2i(-1, -1)
 	var trap = false
 	var plant = false
@@ -280,6 +278,8 @@ func spawn_unit(spawn_position: Vector2):
 		explorer.global_position = grid_to_world(grid_pos)
 		add_sibling.call_deferred(explorer)
 		await explorer.ready
+	if not intro:
+		explorer.set_light_on()
 		explorer.navigation_agent_2d.connect("navigation_finished", _on_navigation_finished)
 
 func update_block_tile_highlight(mouse_pos: Vector2):

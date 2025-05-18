@@ -7,6 +7,26 @@
 
 [node name="ExampleBalloon" parent="." index="2" instance=ExtResource("2_d0b0v")]
 
+[node name="HBoxContainer2" parent="CanvasLayer/MarginContainer/VBoxContainer" index="2"]
+custom_minimum_size = Vector2(0, 0)
+
+[node name="TutorialButton" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer2" index="0"]
+custom_minimum_size = Vector2(0, 0)
+
+[node name="InputDisplayLabel" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer2" index="1"]
+visible = true
+
+[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer2" index="2"]
+layout_mode = 2
+text = "Change Level State: "
+
+[node name="NextTurnButton" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer2" index="3"]
+custom_minimum_size = Vector2(0, 0)
+size_flags_horizontal = 1
+
+[node name="ExampleBalloon" parent="CanvasLayer" index="1"]
+visible = true
+
 [node name="PointLight2D" parent="Level" index="0"]
 position = Vector2(1668, -3670)
 
@@ -20,7 +40,7 @@ tile_map_data = PackedByteArray("AADU/+j/AQAvAAMAAADV/+j/AQAvAAMAAADW/+j/AQAzAAE
 tile_map_data = PackedByteArray("AADp/93/AQAUAAMAAAA=")
 
 [node name="InitialSpawnPosition" parent="Level" index="9"]
-position = Vector2(-1341, -873)
+position = Vector2(-894, -1092)
 
 [node name="Marker2D" type="Marker2D" parent="." index="5"]
 position = Vector2(-8451, -3456)
