@@ -13,7 +13,6 @@ class_name Level
 @onready var second_position: Marker2D = $SecondMovement
 @onready var third_position: Marker2D = $ThirdMovement
 @onready var black_overlay: CanvasModulate = $CanvasModulate
-@onready var state_machine: StateMachine = $StateMachine
 var character_scene = preload("Character.tscn")
 var trap_light: PackedScene = preload("res://scenes/light_scene.tscn")
 var resource = load("res://scenes/dialog/explorer.dialogue")
@@ -53,6 +52,7 @@ const INF = 1e9
 const DIRECTIONS = [Vector2i.DOWN, Vector2i.UP, Vector2i.RIGHT, Vector2i.LEFT]
 const PATH_ARROW_INTERVAL = 10
 
+@export var intro = false
 var explorer: Explorer
 var initial_treasure_box_placement_tile = Vector2i(0, 0)
 var distance_to_treasure_grid = []
@@ -113,8 +113,10 @@ func execute_explorer_turn(movement_range):
 	var player_win = false
 	if distance_to_treasure <= movement_range:
 		explorer_win = true
-		if state_machine.get_node("InitLevel").intro:
+		if intro:
 			player_win = true
+	if not intro:
+		explorer.set_light_on()
 	var current_tile = Vector2i(-1, -1)
 	var trap = false
 	var plant = false
@@ -146,10 +148,11 @@ func execute_explorer_turn(movement_range):
 		return
 	if plant:
 		pass
-	if explorer_win:
-		explorer_win()
 	if player_win:
 		player_win()
+		return
+	if explorer_win:
+		explorer_win()
 		#explorer_temp_movement = 12
 	
 	
@@ -277,9 +280,6 @@ func spawn_unit(spawn_position: Vector2):
 		explorer.global_position = grid_to_world(grid_pos)
 		add_sibling.call_deferred(explorer)
 		await explorer.ready
-		if not state_machine.get_node("InitLevel").intro:
-			pass
-			#explorer.light.show()
 		explorer.navigation_agent_2d.connect("navigation_finished", _on_navigation_finished)
 
 func update_block_tile_highlight(mouse_pos: Vector2):

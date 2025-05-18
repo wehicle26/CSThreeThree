@@ -6,6 +6,8 @@ class_name Explorer
 @onready var animation_player = $AnimationPlayer
 @onready var light: PointLight2D = $PointLight2D
 
+@export var light_on = false
+
 var next_path_position: Vector2
 var facing_direction: int
 var last_direction = 0
@@ -13,6 +15,11 @@ var last_direction = 0
 func _ready() -> void:
 	navigation_agent_2d.velocity_computed.connect(Callable(_on_velocity_computed))
 	set_facing_direction(Vector2.ZERO)
+
+func set_light_on():
+	if light:
+		light.enabled = true
+		light.show()
 
 func set_movement_target(movement_target: Vector2):
 	if navigation_agent_2d:
