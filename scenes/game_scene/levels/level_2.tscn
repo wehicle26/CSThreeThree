@@ -10,6 +10,9 @@ offset_bottom = 10.0
 [node name="TutorialManager" parent="." index="1"]
 tutorial_scenes = Array[PackedScene]([])
 
+[node name="Level" parent="." index="3"]
+is_intro_sequence = false
+
 [node name="PointLight2D" type="PointLight2D" parent="Level" index="0"]
 position = Vector2(1410, -4578)
 texture = ExtResource("2_qga8p")

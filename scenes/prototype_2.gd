@@ -2,6 +2,7 @@ extends Node2D
 
 class_name Level
 
+signal explorer_turn_ended
 @onready var floor_tile_map_layer: TileMapLayer = $Floor
 @onready var highlight_path: TileMapLayer = $HighlightPath
 @onready var walls_tile_map_layer: TileMapLayer = $Walls
@@ -53,6 +54,7 @@ const DIRECTIONS = [Vector2i.DOWN, Vector2i.UP, Vector2i.RIGHT, Vector2i.LEFT]
 const PATH_ARROW_INTERVAL = 10
 
 @export var intro = false
+@export var is_intro_sequence = false
 var explorer: Explorer
 var initial_treasure_box_placement_tile = Vector2i(0, 0)
 var distance_to_treasure_grid = []
@@ -98,11 +100,11 @@ func run_intro_scene():
 		return self
 	DialogueManager.show_dialogue_balloon(resource, "start")
 	var dialogue_line = await DialogueManager.get_next_dialogue_line(resource, "start")
-	await DialogueManager.dialogue_ended
+	#await DialogueManager.dialogue_ended
 	dialogue_line = await DialogueManager.get_next_dialogue_line(resource, "entrance")
-	await DialogueManager.dialogue_ended
+	#await DialogueManager.dialogue_ended
 	dialogue_line = await DialogueManager.get_next_dialogue_line(resource, "garden")
-	await DialogueManager.dialogue_ended
+	#await DialogueManager.dialogue_ended
 
 func execute_explorer_turn(movement_range):
 	calculate_distances_from_target()
@@ -152,6 +154,8 @@ func execute_explorer_turn(movement_range):
 	if explorer_win:
 		explorer_win()
 		#explorer_temp_movement = 12
+	if not is_intro_sequence:
+		explorer_turn_ended.emit()
 	
 	
 

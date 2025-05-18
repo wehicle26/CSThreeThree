@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://sdf5m08xw32j" path="res://scenes/credits/credits.tscn" id="4_2k5l7"]
 [ext_resource type="AudioStream" uid="uid://by1uiaviudmb5" path="res://assets/sounds/MNT_YTK_ui_chirp.wav" id="5_ixa71"]
 [ext_resource type="AudioStream" uid="uid://dai4jh075103s" path="res://assets/sounds/MNT_YTK_ui_slider_change.wav" id="6_2k5l7"]
-[ext_resource type="AudioStream" uid="uid://bvakytdgil1cr" path="res://assets/sounds/PL_BA_90_Harpsi_Loop_Wood_01_Cm.wav" id="7_2k5l7"]
+[ext_resource type="AudioStream" uid="uid://dp3i2bunxh6r1" path="res://assets/sounds/PL_BA_80_String_Loop_Discovery_Low_Dm.wav" id="7_2k5l7"]
 
 [sub_resource type="Animation" id="1"]
 resource_name = "Intro"

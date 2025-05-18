@@ -107,6 +107,7 @@ visible = false
 [node name="Level" type="Node2D" parent="."]
 y_sort_enabled = true
 script = ExtResource("6_8avtb")
+is_intro_sequence = true
 
 [node name="StateMachine" type="Node" parent="Level" node_paths=PackedStringArray("initial_state", "common_node")]
 script = ExtResource("8_ua84b")

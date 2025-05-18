@@ -27,6 +27,9 @@ size_flags_horizontal = 1
 [node name="ExampleBalloon" parent="CanvasLayer" index="1"]
 visible = true
 
+[node name="Level" parent="." index="4"]
+is_intro_sequence = false
+
 [node name="PointLight2D" parent="Level" index="0"]
 position = Vector2(1673, -4064)
 

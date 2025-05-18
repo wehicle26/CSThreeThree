@@ -9,7 +9,9 @@ Samuel: Something feels off about this place.
 Samuel: It's too quiet here.
 do execute_explorer_turn(6)
 ~ garden
-Trapp: Who dares disturb my keep!
+King Trapp: Who dares disturb my keep!
 Samuel: Huh!?
 King Trapp: You will dearly regret this transgression!
+do explorer_turn_ended.emit()
+set is_intro_sequence = false
 => END
